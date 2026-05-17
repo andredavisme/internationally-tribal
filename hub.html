@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Creative Lab — Chapter Hub</title>
+  <style>
+    :root {
+      --black: #111;
+      --red: #e00;
+      --white: #f5f5f5;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem 3rem;
+      text-align: center;
+      border-bottom: 3px solid var(--red);
+    }
+    .hero-logo {
+      width: clamp(100px, 18vw, 160px);
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .hero-logo:hover { transform: scale(1.05); }
+    .hero h1 {
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .hero h1 span { color: var(--red); }
+    .hero p {
+      margin-top: 0.75rem;
+      color: #999;
+      max-width: 600px;
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+    .hero-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .hero-links a {
+      color: var(--red);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      text-decoration: none;
+      border: 1px solid var(--red);
+      padding: 0.4rem 1rem;
+      border-radius: 3px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .hero-links a:hover { background: var(--red); color: white; }
+
+    /* ── CHAPTER GRID ── */
+    .grid-label {
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.8rem;
+      color: #555;
+      margin: 3rem 0 1.5rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem 5rem;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 1.75rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      border-color: var(--red);
+      transform: translateY(-3px);
+    }
+    .card.locked {
+      opacity: 0.45;
+      cursor: default;
+      pointer-events: none;
+    }
+    .card.locked:hover { transform: none; border-color: #2a2a2a; }
+    .card-chapter {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--red);
+    }
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: bold;
+      color: var(--white);
+      line-height: 1.3;
+    }
+    .card-desc {
+      font-size: 0.9rem;
+      color: #888;
+      line-height: 1.5;
+    }
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.4rem;
+    }
+    .card-tag {
+      background: #252525;
+      border: 1px solid #383838;
+      color: #777;
+      font-size: 0.72rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .card-arrow {
+      position: absolute;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      color: #333;
+      font-size: 1.1rem;
+      transition: color 0.2s;
+    }
+    .card:hover .card-arrow { color: var(--red); }
+    .coming-soon {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: #222;
+      border: 1px solid #444;
+      color: #555;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    footer {
+      text-align: center;
+      color: #444;
+      font-size: 0.8rem;
+      padding: 2rem;
+      border-top: 1px solid #1e1e1e;
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <!-- Inline mini SVG logo, clickable back to animation -->
+  <a href="index.html" title="Watch the animation">
+    <svg class="hero-logo" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="250" cy="250" r="248" fill="black"/>
+      <polygon points="155,15 345,15 485,155 485,345 345,485 155,485 15,345 15,155" fill="none" stroke="white" stroke-width="14"/>
+      <circle cx="250" cy="250" r="210" fill="black"/>
+      <rect x="95" y="110" width="310" height="285" rx="4" fill="white" transform="rotate(-4,250,250)"/>
+      <polygon points="172,128 188,145 188,365 172,382 156,365 156,145" fill="red"/>
+      <polygon points="210,128 388,128 400,152 388,175 210,175 198,152" fill="red"/>
+      <polygon points="285,175 325,175 325,365 305,385 285,365" fill="red"/>
+      <polygon points="250,395 220,435 280,435" fill="none" stroke="white" stroke-width="4"/>
+      <line x1="250" y1="405" x2="250" y2="428" stroke="white" stroke-width="2"/>
+      <line x1="235" y1="428" x2="265" y2="428" stroke="white" stroke-width="2"/>
+      <line x1="224" y1="450" x2="276" y2="468" stroke="white" stroke-width="4" stroke-linecap="round"/>
+      <line x1="276" y1="450" x2="224" y2="468" stroke="white" stroke-width="4" stroke-linecap="round"/>
+    </svg>
+  </a>
+  <h1>AI Creative <span>Lab</span></h1>
+  <p>A living textbook. Each chapter is a real, deployable mini-app — built with AI as your co-pilot. You bring the idea. AI brings the execution speed.</p>
+  <div class="hero-links">
+    <a href="index.html">&#9654; Watch the Animation</a>
+    <a href="activity.html">&#128218; Start Here (Activity Guide)</a>
+  </div>
+</div>
+
+<p class="grid-label">Choose a Chapter</p>
+
+<div class="grid">
+
+  <!-- CH 00 -- ORIGIN -->
+  <a class="card" href="activity.html">
+    <span class="card-chapter">Chapter 00</span>
+    <div class="card-title">The Logo That Comes Alive</div>
+    <div class="card-desc">Build an SVG logo animation from scratch. Learn the core mindset: AI is a collaborator, not the creator. This is where it all starts.</div>
+    <div class="card-tags">
+      <span class="card-tag">SVG</span>
+      <span class="card-tag">Anime.js</span>
+      <span class="card-tag">Branding</span>
+      <span class="card-tag">GitHub Pages</span>
+    </div>
+    <span class="card-arrow">&rarr;</span>
+  </a>
+
+  <!-- CH 01 -- DAILY FOCUS DASHBOARD -->
+  <a class="card" href="chapters/01/index.html">
+    <span class="card-chapter">Chapter 01</span>
+    <div class="card-title">Daily Focus Dashboard</div>
+    <div class="card-desc">A minimal personal dashboard: time, date, a daily intention you set, and a focus timer. Runs in the browser — no account needed.</div>
+    <div class="card-tags">
+      <span class="card-tag">LocalStorage</span>
+      <span class="card-tag">Timers</span>
+      <span class="card-tag">Productivity</span>
+      <span class="card-tag">JS</span>
+    </div>
+    <span class="card-arrow">&rarr;</span>
+  </a>
+
+  <!-- CH 02 -- IDEA CAPTURE BOARD -->
+  <a class="card locked" href="#">
+    <span class="card-chapter">Chapter 02</span>
+    <span class="coming-soon">Coming Soon</span>
+    <div class="card-title">Idea Capture Board</div>
+    <div class="card-desc">A drag-and-drop sticky note board that saves to your browser. Organize thoughts, ideas, and tasks without any app or login.</div>
+    <div class="card-tags">
+      <span class="card-tag">Drag &amp; Drop</span>
+      <span class="card-tag">LocalStorage</span>
+      <span class="card-tag">Organization</span>
+    </div>
+  </a>
+
+  <!-- CH 03 -- INVOICE GENERATOR -->
+  <a class="card locked" href="#">
+    <span class="card-chapter">Chapter 03</span>
+    <span class="coming-soon">Coming Soon</span>
+    <div class="card-title">One-Click Invoice Generator</div>
+    <div class="card-desc">Fill in your details, add line items, and download a clean PDF invoice instantly. No subscription. No cloud. Just a browser.</div>
+    <div class="card-tags">
+      <span class="card-tag">PDF</span>
+      <span class="card-tag">Forms</span>
+      <span class="card-tag">Freelance</span>
+      <span class="card-tag">Professional</span>
+    </div>
+  </a>
+
+  <!-- CH 04 -- PORTFOLIO PAGE -->
+  <a class="card locked" href="#">
+    <span class="card-chapter">Chapter 04</span>
+    <span class="coming-soon">Coming Soon</span>
+    <div class="card-title">Animated Portfolio Page</div>
+    <div class="card-desc">Build a personal portfolio page with animated section reveals, a project grid, and a contact form — deployable on GitHub Pages.</div>
+    <div class="card-tags">
+      <span class="card-tag">CSS Animations</span>
+      <span class="card-tag">Layout</span>
+      <span class="card-tag">Portfolio</span>
+    </div>
+  </a>
+
+  <!-- CH 05 -- MEETING NOTE TAKER -->
+  <a class="card locked" href="#">
+    <span class="card-chapter">Chapter 05</span>
+    <span class="coming-soon">Coming Soon</span>
+    <div class="card-title">Meeting Note Taker</div>
+    <div class="card-desc">A structured note-taking app with auto-timestamping, action item tagging, and one-click export to plain text or markdown.</div>
+    <div class="card-tags">
+      <span class="card-tag">Productivity</span>
+      <span class="card-tag">Export</span>
+      <span class="card-tag">Markdown</span>
+    </div>
+  </a>
+
+  <!-- CH 06 -- BRAND PALETTE TOOL -->
+  <a class="card locked" href="#">
+    <span class="card-chapter">Chapter 06</span>
+    <span class="coming-soon">Coming Soon</span>
+    <div class="card-title">Brand Palette Generator</div>
+    <div class="card-desc">Pick a base color, generate a full brand palette with tints, shades, and complementary colors, and export as CSS variables or a swatch sheet.</div>
+    <div class="card-tags">
+      <span class="card-tag">Color</span>
+      <span class="card-tag">Design</span>
+      <span class="card-tag">CSS</span>
+      <span class="card-tag">Branding</span>
+    </div>
+  </a>
+
+  <!-- CH 07 -- SOUND BOARD -->
+  <a class="card locked" href="#">
+    <span class="card-chapter">Chapter 07</span>
+    <span class="coming-soon">Coming Soon</span>
+    <div class="card-title">Custom Soundboard</div>
+    <div class="card-desc">Build a browser-based soundboard with labeled pads, upload your own audio clips, and trigger them with keyboard shortcuts. Great for live streaming.</div>
+    <div class="card-tags">
+      <span class="card-tag">Web Audio</span>
+      <span class="card-tag">Streaming</span>
+      <span class="card-tag">Live</span>
+      <span class="card-tag">Interactive</span>
+    </div>
+  </a>
+
+</div>
+
+<footer>AI Creative Lab &mdash; Internationally Tribal &mdash; Built chapter by chapter with human vision and AI execution.</footer>
+
+</body>
+</html>
