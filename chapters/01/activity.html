@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 01 Activity — Daily Focus Dashboard</title>
+  <style>
+    :root {
+      --black: #111;
+      --red: #e00;
+      --white: #f5f5f5;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--black);
+      color: var(--white);
+      line-height: 1.7;
+    }
+    header {
+      background: var(--black);
+      border-bottom: 4px solid var(--red);
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+    }
+    header .chapter-tag {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--red);
+      margin-bottom: 0.75rem;
+    }
+    header h1 {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    header h1 span { color: var(--red); }
+    header p {
+      margin-top: 0.75rem;
+      font-size: 1.05rem;
+      color: #888;
+      max-width: 600px;
+      margin-inline: auto;
+    }
+    .header-links {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .header-links a {
+      color: var(--red);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      text-decoration: none;
+      border: 1px solid var(--red);
+      padding: 0.4rem 1rem;
+      border-radius: 3px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .header-links a:hover { background: var(--red); color: white; }
+
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+    }
+    section { margin-bottom: 3.5rem; }
+    h2 {
+      font-size: 1.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--red);
+      border-left: 5px solid var(--red);
+      padding-left: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    h3 { font-size: 1.05rem; color: #ccc; margin: 1.5rem 0 0.5rem; }
+    p { margin-bottom: 1rem; color: #bbb; }
+    ul, ol { padding-left: 1.5rem; color: #999; margin-bottom: 1rem; }
+    li { margin-bottom: 0.5rem; }
+    a { color: var(--red); }
+
+    .callout {
+      background: #1a1a1a;
+      border-left: 4px solid var(--red);
+      padding: 1.25rem 1.5rem;
+      border-radius: 4px;
+      margin: 1.5rem 0;
+    }
+    .callout p { margin: 0; }
+    .callout strong { color: var(--white); }
+
+    .step {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .step-num {
+      display: inline-block;
+      background: var(--red);
+      color: white;
+      font-weight: bold;
+      font-size: 0.8rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+      margin-bottom: 0.6rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .step h3 { margin-top: 0; color: white; }
+
+    code {
+      background: #222;
+      color: #f88;
+      padding: 0.15em 0.4em;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    pre {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    pre code {
+      background: none;
+      color: #f88;
+      padding: 0;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    @media (max-width: 540px) { .concept-grid { grid-template-columns: 1fr; } }
+    .concept-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 1.25rem;
+    }
+    .concept-card h4 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--red);
+      margin-bottom: 0.5rem;
+    }
+    .concept-card p { color: #888; font-size: 0.88rem; margin: 0; }
+
+    .tag-row {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0;
+    }
+    .tag {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      color: #777;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .big-quote {
+      font-size: clamp(1.1rem, 3vw, 1.6rem);
+      font-style: italic;
+      color: var(--white);
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid #222;
+      border-bottom: 1px solid #222;
+      margin: 2rem 0;
+      line-height: 1.5;
+    }
+    .big-quote span { color: var(--red); }
+
+    .reflection {
+      background: #111;
+      border: 2px dashed #333;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+    .reflection p { color: #666; font-style: italic; }
+    .reflection ol { color: #666; }
+
+    .extend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .extend-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 1.25rem;
+    }
+    .extend-card h4 { color: white; font-size: 0.95rem; margin-bottom: 0.4rem; }
+    .extend-card p { font-size: 0.85rem; color: #666; margin: 0; }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #444;
+      font-size: 0.8rem;
+      border-top: 1px solid #1e1e1e;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="chapter-tag">Chapter 01 — Activity Guide</div>
+  <h1>Build a <span>Daily Focus</span> Dashboard</h1>
+  <p>Learn localStorage, timers, and live DOM updates — while building a tool you’ll actually use every day.</p>
+  <div class="header-links">
+    <a href="index.html">&#9654; Open the Dashboard</a>
+    <a href="../../hub.html">&larr; All Chapters</a>
+    <a href="../../activity.html">Chapter 00</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- WHY THIS MATTERS -->
+  <section>
+    <h2>Why This Project?</h2>
+    <p>The logo animation in Chapter 00 showed you that AI can help with visual, creative work. This chapter proves the same is true for <strong>functional, practical tools</strong> — the kind you’d actually open every morning.</p>
+    <p>A focus dashboard is the perfect second project because it introduces three of the most useful browser-native concepts you’ll use in almost every app you ever build:</p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>localStorage</h4>
+        <p>Save data to the user’s browser without a database, server, or account. Data persists across page reloads and browser restarts.</p>
+      </div>
+      <div class="concept-card">
+        <h4>setInterval</h4>
+        <p>Run a function on a repeating schedule — every second, every minute. This powers both the live clock and the countdown timer.</p>
+      </div>
+      <div class="concept-card">
+        <h4>DOM Manipulation</h4>
+        <p>Update what’s visible on the page in real time without reloading. Every tick of the clock, every state change in the timer.</p>
+      </div>
+      <div class="concept-card">
+        <h4>State Management</h4>
+        <p>Tracking what mode the app is in — running, paused, editing — and making the UI reflect that state clearly at all times.</p>
+      </div>
+    </div>
+
+    <div class="tag-row">
+      <span class="tag">JavaScript</span>
+      <span class="tag">localStorage</span>
+      <span class="tag">setInterval</span>
+      <span class="tag">DOM</span>
+      <span class="tag">State</span>
+      <span class="tag">GitHub Pages</span>
+    </div>
+  </section>
+
+  <!-- THE AI ANGLE -->
+  <section>
+    <h2>The AI Angle for This Chapter</h2>
+    <p>In Chapter 00, AI helped you generate shapes and coordinates. Here, the challenge is different — you’re describing <em>behavior</em>, not just appearance. This is where prompting gets more interesting.</p>
+
+    <div class="callout">
+      <p><strong>Describing behavior to AI</strong> requires you to think through the logic yourself first. If you can’t explain what should happen, AI can’t build it. This is a feature, not a bug — it forces clarity of thought before a single line of code is written.</p>
+    </div>
+
+    <div class="big-quote">
+      &ldquo;If you can’t explain the logic to a person,
+      <span>you can’t explain it to AI either.</span>&rdquo;
+    </div>
+
+    <p>A dashboard like this has several distinct behaviors that each need to be thought through before prompting:</p>
+    <ul>
+      <li>What happens when the timer reaches zero?</li>
+      <li>What should the page remember between visits?</li>
+      <li>How does the user know their intention was actually saved?</li>
+      <li>What does "paused" look like vs. "stopped" vs. "complete"?</li>
+    </ul>
+    <p>Answering these questions is <em>your</em> job. That’s the human priority of creation. AI handles the syntax once you know what you want.</p>
+  </section>
+
+  <!-- BEFORE YOU BUILD -->
+  <section>
+    <h2>Before You Build — Design the Logic</h2>
+    <p>Don’t open AI yet. Answer these questions first in writing or out loud:</p>
+
+    <div class="reflection">
+      <ol>
+        <li>What three things do you want to see every time you open a new browser tab or start your day?</li>
+        <li>How long is your ideal focus session? Do you want preset options or a custom input?</li>
+        <li>What should happen when the timer finishes — sound, visual change, a log entry, all of the above?</li>
+        <li>What’s one thing you want to remember across browser sessions? (e.g. your intention, your streak, your goals)</li>
+        <li>What would make you actually open this page every day vs. forget about it?</li>
+      </ol>
+      <p style="margin-top:1rem;">These answers are your feature spec. Every prompt you write should serve this spec.</p>
+    </div>
+  </section>
+
+  <!-- BUILD PHASES -->
+  <section>
+    <h2>Build It</h2>
+
+    <div class="step">
+      <span class="step-num">Phase 1</span>
+      <h3>Scaffold the page</h3>
+      <p>Start a new <code>index.html</code> in your repo (or a new folder <code>chapters/01/</code>). Ask AI to set up a dark-themed single-page layout with three sections: a clock area, an intention area, and a timer area. Give it your color palette.</p>
+      <pre><code>Build a single HTML page with a dark background (#111), white text,
+and red (#e00) accents. It should have three stacked sections centered
+on the page: a large live clock at the top, a text intention field in
+the middle, and a countdown timer at the bottom. No frameworks, no
+libraries. Vanilla HTML, CSS, JavaScript only.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 2</span>
+      <h3>Wire up the live clock</h3>
+      <p>The clock needs to update every second and display both time and date. Ask AI to implement this, then observe how <code>setInterval</code> and <code>new Date()</code> work together. This is one of the most reusable patterns in JavaScript.</p>
+      <pre><code>Add a live clock that updates every second using setInterval and
+new Date(). Show the time in 24-hour format (HH:MM:SS) in a large
+font. Below it, show the full date (e.g. MONDAY, MAY 17, 2026)
+in a smaller muted font. Make it visually clear this is a live
+clock, not a timer — add a small pulsing indicator label.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 3</span>
+      <h3>Build the intention field with localStorage</h3>
+      <p>This is the most important UX challenge in the project: how do you make it obvious what saving means and that it worked? Tackle this in two sub-prompts.</p>
+      <pre><code>Add a "Today's Intention" field. Clicking it opens a text input.
+When the user presses Enter or clicks Save, the value is stored
+in localStorage under the key 'my_intention'. On page load,
+if a saved value exists, display it. Add a visible status message
+that shows whether the intention is saved or not.</code></pre>
+      <p>Once that works, push back on the UX:</p>
+      <pre><code>The save state isn't clear enough. Add a toast notification that
+appears briefly at the bottom of the screen confirming the save.
+Also add Cancel and Save buttons that appear while editing,
+and an Escape key shortcut to cancel.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 4</span>
+      <h3>Build the focus timer</h3>
+      <p>A countdown timer has more state than it appears. Walk through the logic before prompting: it needs a running state, a paused state, preset durations, and a completion handler.</p>
+      <pre><code>Add a countdown focus timer. It should have preset buttons for
+25, 45, and 60 minutes, and a 5-minute break option. A Start
+button begins the countdown. While running, the button changes
+to Pause. Pausing preserves the remaining time. A Reset button
+returns to the selected preset. When the timer reaches zero,
+log the completed session with a timestamp and the current
+intention to a list below the timer.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 5</span>
+      <h3>Polish and publish</h3>
+      <p>Review your dashboard with fresh eyes. Ask:</p>
+      <ul>
+        <li>Is it obvious what each element does without reading any instructions?</li>
+        <li>Does the visual state of the timer clearly communicate running vs. paused vs. idle?</li>
+        <li>Is the intention save status unambiguous?</li>
+      </ul>
+      <p>Make targeted fix prompts for anything that feels unclear, then push to GitHub and enable Pages. You’ve shipped a real productivity tool.</p>
+    </div>
+  </section>
+
+  <!-- KEY CONCEPTS -->
+  <section>
+    <h2>Concepts You Just Used</h2>
+    <p>Look back at your finished code and find each of these patterns. Understanding <em>where</em> they live in your code is as important as knowing they exist.</p>
+    <ul>
+      <li><code>setInterval(fn, 1000)</code> — runs <code>fn</code> every 1000ms (1 second)</li>
+      <li><code>localStorage.setItem(key, value)</code> — saves a string to the browser</li>
+      <li><code>localStorage.getItem(key)</code> — retrieves it on next load</li>
+      <li><code>element.textContent = ...</code> — updates visible text without reloading</li>
+      <li><code>element.classList.toggle('class', bool)</code> — adds/removes a CSS class based on state</li>
+      <li><code>clearInterval(id)</code> — stops a running interval (used to pause the timer)</li>
+      <li>A <strong>state variable</strong> like <code>let running = false</code> — the app’s memory of what mode it’s in</li>
+    </ul>
+
+    <div class="callout">
+      <p><strong>These seven patterns</strong> appear in virtually every interactive web app ever built. You didn’t just build a timer — you built the foundation for understanding most of the JavaScript you’ll encounter going forward.</p>
+    </div>
+  </section>
+
+  <!-- REFLECTION -->
+  <section>
+    <h2>Reflect</h2>
+    <div class="reflection">
+      <ol>
+        <li>What was the hardest behavior to describe to AI? Why was it hard to put into words?</li>
+        <li>Did AI get something wrong on the first try? What was the fix prompt you used?</li>
+        <li>How is describing app behavior to AI similar to writing instructions for another person?</li>
+        <li>What did the AI suggest that you kept exactly as-is? What did you change?</li>
+        <li>If you were handing this dashboard to a friend, what would you want to explain to them first?</li>
+      </ol>
+      <p style="margin-top:1rem;">The gap between what you intended and what AI produced is the most valuable learning in this chapter. That gap is where your skills grow.</p>
+    </div>
+  </section>
+
+  <!-- GO FURTHER -->
+  <section>
+    <h2>Go Further</h2>
+    <div class="extend-grid">
+      <div class="extend-card">
+        <h4>&#128276; Timer Sound</h4>
+        <p>Use the Web Audio API to play a soft chime when the timer completes. No audio files needed — generate tones in code.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128200; Streak Tracker</h4>
+        <p>Save a daily session count to localStorage. Display a streak counter that resets if you miss a day.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#127775; Custom Themes</h4>
+        <p>Add a palette switcher that changes CSS custom properties at runtime and saves the choice to localStorage.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128196; Export Log</h4>
+        <p>Add a button that exports today’s session log as a plain text or markdown file the user can download.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128336; Custom Presets</h4>
+        <p>Let the user define their own timer durations and save them to localStorage so they persist across sessions.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128172; Daily Prompt</h4>
+        <p>Add a rotating daily question above the intention field — a different reflection prompt each day of the week.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  AI Creative Lab — Chapter 01 Activity — Internationally Tribal
+</footer>
+
+</body>
+</html>
