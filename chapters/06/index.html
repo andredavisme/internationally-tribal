@@ -9,12 +9,20 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--black); color: var(--white); min-height: 100vh; display: flex; flex-direction: column; }
 
-    /* NAV */
-    nav { background: rgba(17,17,17,.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-    .nav-brand { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--red); }
-    .nav-links { display: flex; gap: 1rem; }
-    .nav-links a { color: #666; font-size: .78rem; text-decoration: none; text-transform: uppercase; letter-spacing: .06em; transition: color .2s; }
-    .nav-links a:hover { color: var(--white); }
+    /* NAV — matches Ch 05 pattern */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.9rem 1.5rem;
+      border-bottom: 2px solid #1e1e1e;
+      background: #111;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav a { color: var(--red); text-decoration: none; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    nav span { color: #444; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
 
     /* HERO */
     .hero { background: radial-gradient(ellipse at center, #1a0000 0%, var(--black) 70%); border-bottom: 4px solid var(--red); padding: 3rem 1.5rem 2.5rem; text-align: center; }
@@ -86,11 +94,9 @@
 <body>
 
 <nav>
-  <span class="nav-brand">Internationally Tribal — Chapter 06</span>
-  <div class="nav-links">
-    <a href="activity.html">Activity Guide</a>
-    <a href="../../hub.html">All Chapters</a>
-  </div>
+  <a href="../../hub.html">&larr; All Chapters</a>
+  <span>Ch 06 &mdash; Brand Palette Generator</span>
+  <a href="activity.html">&#128218; Activity Guide</a>
 </nav>
 
 <div class="hero">
@@ -237,13 +243,11 @@ function getScale(hex, steps, satShift) {
   const [h,s,l] = hexToHsl(hex);
   const sAdj = clamp(s + satShift, 0, 100);
   const colors = [];
-  // tints: l from 95 down to base
   for (let i = steps-1; i >= 1; i--) {
     const lt = Math.round(l + (95-l) * (i/steps));
     colors.push({ hex: hslToHex(h, clamp(sAdj - i*2, 0,100), lt), role: 'tint-'+(steps-i) });
   }
   colors.push({ hex: hslToHex(h,s,l), role: 'base' });
-  // shades: l down toward 8
   for (let i = 1; i < steps; i++) {
     const ls = Math.round(l - (l-8) * (i/steps));
     colors.push({ hex: hslToHex(h, clamp(sAdj + i*2, 0,100), ls), role: 'shade-'+i });
@@ -300,9 +304,7 @@ function getNeutrals(hex, steps) {
   return out;
 }
 
-function luminance(hex) {
-  return hexToHsl(hex)[2];
-}
+function luminance(hex) { return hexToHsl(hex)[2]; }
 
 // ── NAMED COLOR APPROXIMATION ─────────────────────────────────────────────────
 const COLOR_NAMES = [
@@ -371,7 +373,6 @@ function makeSwatch(color, showName, darkLabel) {
 
 function makeHarmonyCard(c, showName) {
   const lum = luminance(c.hex);
-  const labelColor = lum > 55 ? '#111' : '#f5f5f5';
   const [h,s,l] = hexToHsl(c.hex);
   const div = document.createElement('div');
   div.className = 'harmony-card';
@@ -401,22 +402,18 @@ function generatePalette() {
   lastHarmony = getHarmony(hex, mode);
   lastNeutrals = getNeutrals(hex, steps);
 
-  // render scale
   const scaleRow = document.getElementById('scaleRow');
   scaleRow.innerHTML = '';
   lastScale.forEach(c => scaleRow.appendChild(makeSwatch(c, showName, darkLabel)));
 
-  // render harmony
   const grid = document.getElementById('harmonyGrid');
   grid.innerHTML = '';
   lastHarmony.forEach(c => grid.appendChild(makeHarmonyCard(c, showName)));
 
-  // render neutrals
   const neutralRow = document.getElementById('neutralRow');
   neutralRow.innerHTML = '';
   lastNeutrals.forEach(c => neutralRow.appendChild(makeSwatch(c, false, darkLabel)));
 
-  // render code
   lastCode = buildCode(lastScale, lastHarmony, lastNeutrals, fmt, name);
   document.getElementById('codeBox').textContent = lastCode;
   const titles = { css:'CSS Custom Properties', scss:'SCSS Variables', json:'JSON Object', tailwind:'Tailwind Config' };
@@ -444,8 +441,7 @@ function downloadCSS() {
 
 function downloadJSON() {
   const name = (document.getElementById('paletteName').value.trim() || 'brand') + '-palette.json';
-  const fmt = document.getElementById('exportFormat').value;
-  const prev = fmt;
+  const prev = document.getElementById('exportFormat').value;
   document.getElementById('exportFormat').value = 'json';
   generatePalette();
   download(lastCode, name, 'application/json');
