@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 07 Activity — Custom Soundboard</title>
+  <style>
+    :root { --black: #111; --red: #e00; --white: #f5f5f5; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--black); color: var(--white); line-height: 1.7; }
+    header { background: var(--black); border-bottom: 4px solid var(--red); padding: 3rem 2rem 2rem; text-align: center; }
+    header .chapter-tag { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--red); margin-bottom: .75rem; }
+    header h1 { font-size: clamp(1.8rem,5vw,3rem); letter-spacing: .04em; text-transform: uppercase; }
+    header h1 span { color: var(--red); }
+    header p { margin-top: .75rem; font-size: 1.05rem; color: #888; max-width: 600px; margin-inline: auto; }
+    .header-links { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+    .header-links a { color: var(--red); font-size: .8rem; text-transform: uppercase; letter-spacing: .07em; text-decoration: none; border: 1px solid var(--red); padding: .4rem 1rem; border-radius: 3px; transition: background .2s, color .2s; }
+    .header-links a:hover { background: var(--red); color: white; }
+    main { max-width: 860px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    section { margin-bottom: 3.5rem; }
+    h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: .08em; color: var(--red); border-left: 5px solid var(--red); padding-left: .75rem; margin-bottom: 1rem; }
+    h3 { font-size: 1.05rem; color: #ccc; margin: 1.5rem 0 .5rem; }
+    p { margin-bottom: 1rem; color: #bbb; }
+    ul, ol { padding-left: 1.5rem; color: #999; margin-bottom: 1rem; }
+    li { margin-bottom: .5rem; }
+    a { color: var(--red); }
+    .callout { background: #1a1a1a; border-left: 4px solid var(--red); padding: 1.25rem 1.5rem; border-radius: 4px; margin: 1.5rem 0; }
+    .callout p { margin: 0; }
+    .callout strong { color: var(--white); }
+    .step { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.5rem; margin-bottom: 1.25rem; }
+    .step-num { display: inline-block; background: var(--red); color: white; font-weight: bold; font-size: .8rem; padding: .2rem .6rem; border-radius: 3px; margin-bottom: .6rem; letter-spacing: .05em; text-transform: uppercase; }
+    .step h3 { margin-top: 0; color: white; }
+    code { background: #222; color: #f88; padding: .15em .4em; border-radius: 3px; font-size: .9em; }
+    pre { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.25rem; overflow-x: auto; margin: 1rem 0; }
+    pre code { background: none; color: #f88; padding: 0; font-size: .88rem; line-height: 1.6; }
+    .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+    @media (max-width:540px) { .concept-grid { grid-template-columns: 1fr; } }
+    .concept-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.25rem; }
+    .concept-card h4 { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--red); margin-bottom: .5rem; }
+    .concept-card p { color: #888; font-size: .88rem; margin: 0; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+    .tag { background: #1e1e1e; border: 1px solid #333; color: #777; font-size: .75rem; padding: .25rem .65rem; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; }
+    .big-quote { font-size: clamp(1.1rem,3vw,1.6rem); font-style: italic; color: var(--white); text-align: center; padding: 2rem 1rem; border-top: 1px solid #222; border-bottom: 1px solid #222; margin: 2rem 0; line-height: 1.5; }
+    .big-quote span { color: var(--red); }
+    .reflection { background: #111; border: 2px dashed #333; border-radius: 6px; padding: 1.5rem; margin-top: 1rem; }
+    .reflection p { color: #666; font-style: italic; }
+    .reflection ol { color: #666; }
+    .extend-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 1rem; margin-top: 1rem; }
+    .extend-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.25rem; }
+    .extend-card h4 { color: white; font-size: .95rem; margin-bottom: .4rem; }
+    .extend-card p { font-size: .85rem; color: #666; margin: 0; }
+    .up-next { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 2rem; margin-top: 3rem; display: flex; flex-direction: column; align-items: flex-start; gap: .75rem; }
+    .up-next-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--red); }
+    .up-next h3 { color: white; font-size: 1.2rem; margin: 0; }
+    .up-next p { color: #777; font-size: .88rem; margin: 0; }
+    .up-next a { display: inline-block; background: transparent; border: 1px solid var(--red); color: var(--red); font-size: .82rem; text-transform: uppercase; letter-spacing: .07em; text-decoration: none; padding: .5rem 1.25rem; border-radius: 4px; margin-top: .25rem; transition: background .2s, color .2s; }
+    .up-next a:hover { background: var(--red); color: white; }
+    footer { text-align: center; padding: 2rem; color: #444; font-size: .8rem; border-top: 1px solid #1e1e1e; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="chapter-tag">Chapter 07 — Activity Guide</div>
+  <h1>Build a <span>Custom Soundboard</span></h1>
+  <p>Learn the Web Audio API, FileReader, and base64 audio storage — while building a real tool you’ll use every time you go live on Newscapes.</p>
+  <div class="header-links">
+    <a href="index.html">&#9654; Open the Soundboard</a>
+    <a href="../../hub.html">&larr; All Chapters</a>
+    <a href="../06/activity.html">Chapter 06</a>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <h2>Why This Project?</h2>
+    <p>Every livestream has a soundboard. The pro ones cost hundreds of dollars and lock you into specific hardware. This chapter builds one entirely in the browser — no install, no driver, no subscription. You upload audio files, assign keyboard shortcuts, and fire sounds with a keypress during a live show.</p>
+    <p>The core new concept is the <strong>Web Audio API</strong> — a low-level browser audio engine that gives you programmatic control over playback, gain, routing, and timing. You'll also learn how to store binary audio data in the browser using base64 encoding via the <code>FileReader</code> API and <code>localStorage</code>.</p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>Web Audio API</h4>
+        <p>An <code>AudioContext</code> is a processing graph. You create <code>AudioBufferSourceNode</code>s from decoded audio data, route them through a <code>GainNode</code> for volume control, and connect to <code>destination</code> (the speakers). Each node is single-use — create a new one per play.</p>
+      </div>
+      <div class="concept-card">
+        <h4>FileReader API</h4>
+        <p><code>reader.readAsDataURL(file)</code> converts a local audio file into a base64 data URI string. That string can be stored in localStorage, passed to <code>new Audio()</code> for metadata, and decoded by <code>AudioContext.decodeAudioData()</code> for playback.</p>
+      </div>
+      <div class="concept-card">
+        <h4>AudioBufferSourceNode</h4>
+        <p>Created via <code>ctx.createBufferSource()</code>. Set <code>source.buffer</code> to a decoded <code>AudioBuffer</code>, then call <code>source.start(0)</code>. Each source can only play once — you must create a new node for every trigger. This is by design.</p>
+      </div>
+      <div class="concept-card">
+        <h4>GainNode (Volume)</h4>
+        <p><code>ctx.createGain()</code> creates a volume multiplier. Connect it between the source and destination: <code>source → gainNode → destination</code>. Setting <code>gainNode.gain.value</code> to 0–1 controls volume. A master gain node controls all pads at once.</p>
+      </div>
+    </div>
+
+    <div class="tag-row">
+      <span class="tag">Web Audio API</span>
+      <span class="tag">AudioContext</span>
+      <span class="tag">FileReader</span>
+      <span class="tag">base64</span>
+      <span class="tag">GainNode</span>
+      <span class="tag">keydown Events</span>
+      <span class="tag">localStorage</span>
+      <span class="tag">Blob Export</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>The AI Angle for This Chapter</h2>
+    <p>The Web Audio API has a quirk that catches everyone: <code>AudioBufferSourceNode</code> is single-use. You cannot call <code>source.start()</code> twice on the same node — you must create a new one each time the pad fires. If you ask AI to "make the pad play audio," it may give you code that works once and then silently fails.</p>
+
+    <div class="callout">
+      <p><strong>Tell AI about the constraint upfront.</strong> Prompt: “Write a playPad function using the Web Audio API. Important: AudioBufferSourceNode is single-use — create a new source node on every call, decode the audio buffer fresh each time, and connect source → gainNode → masterGain → destination.” Giving AI the architectural constraint produces correct code on the first pass.”</p>
+    </div>
+
+    <div class="big-quote">
+      &ldquo;A soundboard is just
+      <span>a keyboard shortcut map to a speaker.</span>&rdquo;
+    </div>
+
+    <p>The entire playback system reduces to: base64 string → fetch → ArrayBuffer → AudioBuffer → SourceNode → GainNode → speakers. Once you see that pipeline clearly, every Web Audio feature is just adding a new node in the chain.</p>
+  </section>
+
+  <section>
+    <h2>Before You Build — Map the Audio Graph</h2>
+    <p>Draw the signal chain before writing any code:</p>
+    <div class="reflection">
+      <ol>
+        <li>What does the data model for a pad look like? At minimum: id, label, key, color, audioData (base64), duration. What else might you need?</li>
+        <li>Where does audio actually live? It’s a base64 string in a JS array, persisted to localStorage. What are the size limits of localStorage? (~5MB). What happens if a user loads many long files?</li>
+        <li>Draw the audio graph: <code>SourceNode → PadGain → MasterGain → destination</code>. What does each node do? What would you add between PadGain and MasterGain if you wanted a per-pad EQ?</li>
+        <li>The AudioContext must be created (or resumed) on a user gesture. Why? What happens if you try to create it on page load?</li>
+        <li>How will you handle stopping a pad mid-playback? What state do you need to track?</li>
+      </ol>
+      <p style="margin-top:1rem;">The audio graph mental model is the hardest part of this chapter. Once it clicks, the code is straightforward.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Build It</h2>
+
+    <div class="step">
+      <span class="step-num">Phase 1</span>
+      <h3>Scaffold the layout and pad data model</h3>
+      <p>Two-column layout: sidebar (controls, add pad form, board settings) and main area (pad grid). The pad grid uses <code>auto-fill minmax</code> so it flows without media queries.</p>
+      <pre><code>Layout: 260px sidebar + flexible main area.
+Sidebar contains:
+- Add Pad form: label input, key capture input, color picker, file upload
+- Board Settings: board name, grid columns select
+- Actions: Stop All, Export JSON, Import JSON, Clear Board
+- Shortcuts reference
+Main: board title, pad grid div, empty state
+Bottom: sticky master volume bar with range input + Stop All button
+
+Pad data shape:
+{ id, label, key, color, audioData: base64|null, duration: number|null }</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 2</span>
+      <h3>Build the FileReader audio loading pipeline</h3>
+      <p>When the user selects a file, read it as a data URL (base64). Store it in a <code>pendingAudioData</code> variable. Also use a temporary <code>&lt;audio&gt;</code> element to read the duration from metadata before the pad is added.</p>
+      <pre><code>function readFileAsBase64(file) {
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onload = e => res(e.target.result); // data:audio/...;base64,...
+    reader.onerror = rej;
+    reader.readAsDataURL(file);
+  });
+}
+
+function getAudioDuration(base64) {
+  return new Promise(res => {
+    const audio = new Audio(base64);
+    audio.addEventListener('loadedmetadata', () => res(audio.duration));
+    audio.addEventListener('error', () => res(0));
+  });
+}</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 3</span>
+      <h3>Build the Web Audio playback engine</h3>
+      <p>Create the <code>AudioContext</code> lazily on first play (required by browser autoplay policy). For each play: fetch the base64 string as an ArrayBuffer, decode it, create a new SourceNode, connect through a GainNode and MasterGain, and start. Track active sources so you can stop them.</p>
+      <pre><code>async function playPad(id) {
+  const pad = pads.find(p => p.id === id);
+  const ctx = getAudioCtx(); // creates AudioContext if needed
+
+  // Fetch the base64 data URI as an ArrayBuffer
+  const response = await fetch(pad.audioData);
+  const arrayBuf = await response.arrayBuffer();
+
+  // Decode into an AudioBuffer
+  const audioBuf = await ctx.decodeAudioData(arrayBuf);
+
+  // Create nodes (must be fresh per play)
+  const source = ctx.createBufferSource();
+  source.buffer = audioBuf;
+  const gain = ctx.createGain();
+  gain.gain.value = 1;
+
+  // Connect: source → gain → masterGain → speakers
+  source.connect(gain);
+  gain.connect(masterGain);
+  source.start(0);
+
+  // Track for stop-all
+  activeSources[id] = { source, gainNode: gain };
+  source.onended = () => { delete activeSources[id]; updateUI(); };
+}</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 4</span>
+      <h3>Wire keyboard shortcuts and visual feedback</h3>
+      <p>A single <code>keydown</code> listener maps pressed keys to pad IDs. Guard against firing when the user is typing in an input. Add a <code>.playing</code> CSS class to the active pad and animate a progress bar using the audio duration.</p>
+      <pre><code>document.addEventListener('keydown', e => {
+  // Skip if user is typing
+  if (['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+  if (e.key === ' ') { e.preventDefault(); stopAll(); return; }
+  const pad = pads.find(p => p.key === e.key.toUpperCase());
+  if (pad && pad.audioData) playPad(pad.id);
+});
+
+// Visual feedback on the pad element:
+// - Add class 'playing' on start (CSS: scale down, red border)
+// - Animate .pad-progress bar: width 0% → 100% over audioBuf.duration seconds
+// - Remove 'playing' class and reset bar in source.onended callback</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 5</span>
+      <h3>Add localStorage persistence and JSON export/import</h3>
+      <p>Save the entire board state (pad array including base64 audio data, board name, master volume) to localStorage. Export as a downloadable JSON file using the Blob + Object URL pattern from Chapter 05. Import restores the full board from a JSON file.</p>
+      <pre><code>savePads(): JSON.stringify({ boardName, masterVolume, gridCols, pads })
+  → localStorage.setItem('it_ch07_board', ...)
+
+Note: base64 audio data can be large. Wrap in try/catch —
+localStorage throws a QuotaExceededError if full.
+
+exportBoard(): same Blob download pattern as Ch05/06
+  → downloads as boardname.json
+
+importBoard(file): FileReader reads the JSON text,
+  JSON.parse restores state, call renderPads() + savePads()</code></pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>Concepts You Just Used</h2>
+    <ul>
+      <li><strong>AudioContext</strong> — the root of the Web Audio graph; must be created or resumed on a user gesture due to browser autoplay policy</li>
+      <li><strong>AudioBufferSourceNode</strong> — single-use playback node; create a new one on every trigger, never reuse</li>
+      <li><strong>GainNode</strong> — a volume multiplier in the audio graph; connect in series between source and destination</li>
+      <li><strong>decodeAudioData()</strong> — async method that converts a raw ArrayBuffer into a playable AudioBuffer</li>
+      <li><strong>FileReader.readAsDataURL()</strong> — converts a local file into a base64 data URI string for in-memory storage</li>
+      <li><strong>fetch() on a data URI</strong> — you can <code>fetch(base64String)</code> and call <code>.arrayBuffer()</code> on the result; a clean way to convert base64 back to binary</li>
+      <li><strong>localStorage quota</strong> — base64 audio is ~33% larger than the raw binary; plan for QuotaExceededError on large files</li>
+      <li><strong>source.onended</strong> — fires when playback completes naturally; use it to clean up state and reset visual feedback</li>
+    </ul>
+
+    <div class="callout">
+      <p><strong>The Web Audio API is a graph, not a player.</strong> Every sound goes through a chain of nodes before reaching your speakers. That architecture is what makes it powerful — you can insert filters, compressors, analysers, and reverb nodes anywhere in the chain. This soundboard only uses GainNodes, but the routing pattern you learned here scales to a full audio production suite.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Reflect</h2>
+    <div class="reflection">
+      <ol>
+        <li>Why must <code>AudioBufferSourceNode</code> be single-use? What would break if you could call <code>start()</code> twice on the same node?</li>
+        <li>The audio is stored as base64 in localStorage. What’s the tradeoff vs. storing a File object reference? Why can’t you store the actual File object?</li>
+        <li>The AudioContext is created lazily on first user interaction. What happens on Chrome if you try to create it on page load? How would you detect and handle a suspended context?</li>
+        <li>Right now all pads play at the same volume. How would you add per-pad volume? Where in the audio graph would the per-pad GainNode live relative to the master GainNode?</li>
+        <li>The board exports to JSON including all base64 audio. For a board with 10 clips averaging 30 seconds each, roughly how large would that JSON file be?</li>
+      </ol>
+      <p style="margin-top:1rem;">You built a real production tool. The concepts — audio graph routing, lazy context creation, single-use nodes — are the same ones used in every DAW, game engine, and streaming platform.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Go Further</h2>
+    <div class="extend-grid">
+      <div class="extend-card">
+        <h4>&#127926; Per-Pad Volume</h4>
+        <p>Add a volume slider to each pad’s edit modal. Store <code>volume</code> in the pad object and set the pad-level GainNode on play. This is a second gain stage before masterGain.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128250; Visualizer</h4>
+        <p>Add an <code>AnalyserNode</code> after masterGain. Use <code>requestAnimationFrame</code> + <code>analyser.getByteFrequencyData()</code> to draw a bar chart on a <code>&lt;canvas&gt;</code> element in the footer.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#9654; Loop Mode</h4>
+        <p>Add a loop toggle to each pad. Set <code>source.loop = true</code> before calling <code>source.start()</code>. The pad stays active until you stop it manually — perfect for background music tracks.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128347; Fade Out</h4>
+        <p>Instead of stopping abruptly, use <code>gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5)</code> and then call <code>source.stop()</code> 500ms later for a smooth fade.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128203; Multiple Boards</h4>
+        <p>Add a board selector (like a scene switcher). Store multiple boards in localStorage keyed by name. Switch between them without losing any audio data.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#127925; OBS WebSocket Trigger</h4>
+        <p>Use the OBS WebSocket API to trigger scene changes when specific pads fire. A sound effect and a scene switch at the same time, from one keypress.</p>
+      </div>
+    </div>
+
+    <div class="up-next">
+      <span class="up-next-label">Series Complete — For Now</span>
+      <h3>You’ve Built 8 Real Tools</h3>
+      <p>From an SVG animation to a live soundboard — all in the browser, no frameworks, no accounts. The next chapter is up to you. What do you want to build?</p>
+      <a href="../../hub.html">Back to Hub &rarr;</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>AI Creative Lab — Chapter 07 Activity — Internationally Tribal</footer>
+
+</body>
+</html>

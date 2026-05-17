@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Custom Soundboard — Chapter 07</title>
+  <style>
+    :root { --black: #111; --red: #e00; --white: #f5f5f5; --panel: #1a1a1a; --border: #2a2a2a; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--black); color: var(--white); min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.9rem 1.5rem;
+      border-bottom: 2px solid #1e1e1e;
+      background: #111;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav a { color: var(--red); text-decoration: none; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    nav span { color: #444; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* LAYOUT */
+    .app-wrap { display: grid; grid-template-columns: 260px 1fr; flex: 1; min-height: calc(100vh - 48px); }
+    @media (max-width: 720px) { .app-wrap { grid-template-columns: 1fr; } }
+
+    /* SIDEBAR */
+    .sidebar { background: #0d0d0d; border-right: 1px solid var(--border); padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; overflow-y: auto; }
+    .sidebar-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em; color: #444; border-bottom: 1px solid #1e1e1e; padding-bottom: 0.4rem; margin-bottom: 0.25rem; }
+    label { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #555; margin-bottom: 0.3rem; }
+    input[type=text], input[type=color], select {
+      width: 100%; background: var(--panel); border: 1px solid var(--border);
+      color: var(--white); padding: 0.5rem 0.75rem; border-radius: 4px;
+      font-size: 0.88rem; font-family: inherit; outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type=text]:focus { border-color: var(--red); }
+    input[type=color] { height: 40px; padding: 2px; cursor: pointer; }
+    input[type=range] { width: 100%; accent-color: var(--red); cursor: pointer; margin-top: 0.3rem; }
+    .range-row { display: flex; justify-content: space-between; font-size: 0.72rem; color: #555; }
+    .range-val { color: var(--white); }
+    .btn { width: 100%; background: transparent; border: 1px solid var(--red); color: var(--red); padding: 0.55rem; border-radius: 4px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.07em; cursor: pointer; transition: background 0.2s, color 0.2s; }
+    .btn:hover { background: var(--red); color: white; }
+    .btn-solid { background: var(--red); color: white; }
+    .btn-solid:hover { background: #c00; }
+    .btn-ghost { border-color: #333; color: #666; }
+    .btn-ghost:hover { border-color: #666; color: var(--white); background: transparent; }
+    .divider { border: none; border-top: 1px solid var(--border); }
+    .file-label { display: block; width: 100%; background: transparent; border: 1px dashed #333; color: #666; padding: 0.55rem; border-radius: 4px; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; text-align: center; transition: border-color 0.2s, color 0.2s; }
+    .file-label:hover { border-color: var(--red); color: var(--red); }
+    #fileInput { display: none; }
+    .pad-form { display: flex; flex-direction: column; gap: 0.75rem; }
+    .key-badge { display: inline-block; background: #1e1e1e; border: 1px solid #333; border-radius: 3px; padding: 0.1rem 0.45rem; font-size: 0.75rem; font-family: monospace; color: #888; }
+    .vol-row { display: flex; align-items: center; justify-content: space-between; }
+
+    /* BOARD */
+    .board-wrap { padding: 2rem 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; overflow-y: auto; }
+    .board-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .board-header h2 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--red); }
+    .board-controls { display: flex; gap: 0.5rem; align-items: center; }
+    .board-controls button { background: transparent; border: 1px solid #2a2a2a; color: #666; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.3rem 0.75rem; border-radius: 4px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+    .board-controls button:hover { border-color: var(--red); color: var(--red); }
+    .board-controls select { width: auto; font-size: 0.75rem; padding: 0.3rem 0.6rem; }
+
+    /* PAD GRID */
+    .pad-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem; }
+    .pad {
+      background: var(--panel);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 0.75rem 0.75rem;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      min-height: 100px;
+      transition: transform 0.08s, border-color 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .pad:hover { border-color: #444; }
+    .pad.playing {
+      transform: scale(0.95);
+      border-color: var(--red);
+      background: #1f0000;
+    }
+    .pad.empty { opacity: 0.35; border-style: dashed; cursor: default; }
+    .pad-color-bar { position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: 6px 6px 0 0; }
+    .pad-label { font-size: 0.85rem; font-weight: bold; color: var(--white); line-height: 1.3; word-break: break-word; margin-top: 0.25rem; }
+    .pad-key { font-size: 0.65rem; font-family: monospace; color: #555; }
+    .pad-duration { font-size: 0.65rem; color: #444; }
+    .pad-edit-btn {
+      position: absolute; bottom: 0.5rem; right: 0.5rem;
+      background: none; border: none; color: #333; font-size: 0.75rem;
+      cursor: pointer; padding: 0.2rem; line-height: 1;
+      transition: color 0.15s;
+    }
+    .pad:hover .pad-edit-btn { color: #666; }
+    .pad-edit-btn:hover { color: var(--red) !important; }
+    .pad-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--red); border-radius: 0 0 6px 6px; width: 0; transition: width linear; }
+    .empty-board { text-align: center; padding: 4rem 2rem; color: #333; }
+    .empty-board .icon { font-size: 3rem; display: block; margin-bottom: 1rem; }
+    .empty-board p { font-size: 0.9rem; line-height: 1.6; }
+
+    /* MASTER VOLUME */
+    .master-bar { background: #0d0d0d; border-top: 1px solid var(--border); padding: 0.75rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
+    .master-bar label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: #444; white-space: nowrap; margin: 0; }
+    .master-bar input[type=range] { flex: 1; max-width: 200px; }
+    .master-bar .vol-val { font-size: 0.78rem; color: var(--white); min-width: 36px; }
+    .master-bar .stop-all { background: transparent; border: 1px solid #333; color: #666; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.3rem 0.75rem; border-radius: 4px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .master-bar .stop-all:hover { border-color: var(--red); color: var(--red); }
+    .master-bar .playing-indicator { font-size: 0.72rem; color: #444; margin-left: auto; }
+    .master-bar .playing-indicator.active { color: var(--red); }
+
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: #181818; border: 1px solid #2a2a2a; border-radius: 8px; padding: 2rem; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 1rem; }
+    .modal h3 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--white); }
+    .modal-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+    .modal-actions button { flex: 1; }
+
+    /* TOAST */
+    #toast { position: fixed; bottom: 4rem; left: 50%; transform: translateX(-50%) translateY(20px); background: #1e1e1e; border: 1px solid #333; border-left: 3px solid var(--red); color: #ccc; font-size: 0.82rem; padding: 0.55rem 1.2rem; border-radius: 4px; opacity: 0; transition: opacity 0.3s, transform 0.3s; pointer-events: none; z-index: 9999; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    footer { text-align: center; padding: 1.5rem; color: #444; font-size: 0.78rem; border-top: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../../hub.html">&larr; All Chapters</a>
+  <span>Ch 07 &mdash; Custom Soundboard</span>
+  <a href="activity.html">&#128218; Activity Guide</a>
+</nav>
+
+<div class="app-wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div>
+      <div class="sidebar-title">Add a Pad</div>
+      <div class="pad-form">
+        <div>
+          <label>Label</label>
+          <input type="text" id="padLabel" placeholder="Air Horn, Applause..." maxlength="32" />
+        </div>
+        <div>
+          <label>Keyboard Shortcut</label>
+          <input type="text" id="padKey" placeholder="Press a key..." maxlength="1" readonly />
+        </div>
+        <div>
+          <label>Color</label>
+          <input type="color" id="padColor" value="#e00000" />
+        </div>
+        <div>
+          <label>Audio File</label>
+          <label class="file-label" for="fileInput">&#127925; Choose Audio File</label>
+          <input type="file" id="fileInput" accept="audio/*" />
+          <div id="fileStatus" style="font-size:0.72rem;color:#444;margin-top:0.3rem;">No file selected</div>
+        </div>
+        <button class="btn btn-solid" onclick="addPad()">+ Add Pad</button>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div>
+      <div class="sidebar-title">Board Settings</div>
+      <div style="display:flex;flex-direction:column;gap:0.75rem;">
+        <div>
+          <label>Board Name</label>
+          <input type="text" id="boardName" value="Newscapes Live!" oninput="savePads()" />
+        </div>
+        <div>
+          <label>Grid Columns</label>
+          <select id="gridCols" onchange="applyGridCols()">
+            <option value="2">2 Columns</option>
+            <option value="3">3 Columns</option>
+            <option value="auto" selected>Auto</option>
+            <option value="4">4 Columns</option>
+            <option value="5">5 Columns</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div>
+      <div class="sidebar-title">Actions</div>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;">
+        <button class="btn btn-ghost" onclick="stopAll()">&#9632; Stop All Sounds</button>
+        <button class="btn btn-ghost" onclick="exportBoard()">&#8595; Export Board (.json)</button>
+        <label class="file-label" for="importInput">&#8593; Import Board (.json)</label>
+        <input type="file" id="importInput" accept=".json" style="display:none" onchange="importBoard(event)" />
+        <button class="btn btn-ghost" onclick="clearBoard()">&#128465; Clear Board</button>
+      </div>
+    </div>
+
+    <div style="font-size:0.72rem;color:#444;line-height:1.6;">
+      <div style="color:#555;text-transform:uppercase;letter-spacing:0.08em;font-size:0.65rem;margin-bottom:0.4rem;">Shortcuts</div>
+      Press the assigned key to trigger any pad.<br/>
+      <span class="key-badge">Space</span> stops all sounds.<br/>
+      Click any pad to play it.
+    </div>
+
+  </aside>
+
+  <!-- BOARD -->
+  <div class="board-wrap">
+    <div class="board-header">
+      <h2 id="boardTitle">Newscapes Live!</h2>
+      <div class="board-controls">
+        <button onclick="stopAll()">&#9632; Stop All</button>
+      </div>
+    </div>
+    <div class="pad-grid" id="padGrid"></div>
+    <div class="empty-board" id="emptyBoard">
+      <span class="icon">&#127925;</span>
+      <p>No pads yet.<br/>Upload an audio file and add your first pad using the panel on the left.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- MASTER BAR -->
+<div class="master-bar">
+  <label>Master Vol</label>
+  <input type="range" id="masterVol" min="0" max="1" step="0.01" value="0.8" oninput="updateMasterVol(this.value)" />
+  <span class="vol-val" id="masterVolVal">80%</span>
+  <button class="stop-all" onclick="stopAll()">&#9632; Stop All</button>
+  <span class="playing-indicator" id="playingIndicator">● 0 playing</span>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3>Edit Pad</h3>
+    <div class="pad-form">
+      <div>
+        <label>Label</label>
+        <input type="text" id="editLabel" maxlength="32" />
+      </div>
+      <div>
+        <label>Keyboard Shortcut</label>
+        <input type="text" id="editKey" maxlength="1" placeholder="Press a key..." readonly />
+      </div>
+      <div>
+        <label>Color</label>
+        <input type="color" id="editColor" />
+      </div>
+      <div>
+        <label>Replace Audio (optional)</label>
+        <label class="file-label" for="editFileInput">&#127925; Choose New File</label>
+        <input type="file" id="editFileInput" accept="audio/*" style="display:none" />
+        <div id="editFileStatus" style="font-size:0.72rem;color:#444;margin-top:0.3rem;">Keep existing audio</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-solid" onclick="saveEdit()">Save</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn" style="border-color:#600;color:#f66;" onclick="deletePad()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<footer>AI Creative Lab — Chapter 07 — Internationally Tribal</footer>
+
+<script>
+// ── STATE ────────────────────────────────────────────────────────────────────
+let pads = [];          // { id, label, key, color, audioData, duration }
+let audioCtx = null;
+let masterGain = null;
+let activeSources = {}; // id -> { source, gainNode, startTime, duration }
+let editingId = null;
+let pendingAudioData = null;  // base64 for new pad
+let editPendingAudio = null;  // base64 for edit
+let masterVolume = 0.8;
+const SAVE_KEY = 'it_ch07_board';
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = masterVolume;
+    masterGain.connect(audioCtx.destination);
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// ── FILE LOADING ───────────────────────────────────────────────────────────
+function readFileAsBase64(file) {
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onload = e => res(e.target.result);
+    reader.onerror = rej;
+    reader.readAsDataURL(file);
+  });
+}
+
+function getAudioDuration(base64) {
+  return new Promise(res => {
+    const audio = new Audio(base64);
+    audio.addEventListener('loadedmetadata', () => res(audio.duration));
+    audio.addEventListener('error', () => res(0));
+  });
+}
+
+document.getElementById('fileInput').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  pendingAudioData = await readFileAsBase64(file);
+  document.getElementById('fileStatus').textContent = file.name;
+  if (!document.getElementById('padLabel').value) {
+    document.getElementById('padLabel').value = file.name.replace(/\.[^.]+$/, '');
+  }
+});
+
+document.getElementById('editFileInput').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  editPendingAudio = await readFileAsBase64(file);
+  document.getElementById('editFileStatus').textContent = file.name;
+});
+
+// ── KEY CAPTURE ─────────────────────────────────────────────────────────────
+function makeKeyCaptureInput(inputId) {
+  const el = document.getElementById(inputId);
+  el.addEventListener('keydown', e => {
+    e.preventDefault();
+    const k = e.key.length === 1 ? e.key.toUpperCase() : '';
+    el.value = k;
+  });
+  el.addEventListener('focus', () => { el.value = ''; el.placeholder = 'Press a key...'; });
+}
+makeKeyCaptureInput('padKey');
+makeKeyCaptureInput('editKey');
+
+// ── ADD PAD ────────────────────────────────────────────────────────────────────
+async function addPad() {
+  const label = document.getElementById('padLabel').value.trim();
+  if (!label) { toast('Enter a pad label'); return; }
+  if (!pendingAudioData) { toast('Choose an audio file'); return; }
+  const key = document.getElementById('padKey').value.trim().toUpperCase();
+  const color = document.getElementById('padColor').value;
+  if (key && pads.find(p => p.key === key)) { toast(`Key "${key}" already in use`); return; }
+  const duration = await getAudioDuration(pendingAudioData);
+  pads.push({ id: Date.now().toString(), label, key, color, audioData: pendingAudioData, duration: Math.round(duration * 10) / 10 });
+  pendingAudioData = null;
+  document.getElementById('padLabel').value = '';
+  document.getElementById('padKey').value = '';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('fileStatus').textContent = 'No file selected';
+  renderPads();
+  savePads();
+  toast('Pad added');
+}
+
+// ── PLAY ──────────────────────────────────────────────────────────────────────
+async function playPad(id) {
+  const pad = pads.find(p => p.id === id);
+  if (!pad) return;
+  const ctx = getAudioCtx();
+  // stop existing instance of this pad if playing
+  if (activeSources[id]) {
+    try { activeSources[id].source.stop(); } catch(e) {}
+    delete activeSources[id];
+  }
+  try {
+    const response = await fetch(pad.audioData);
+    const arrayBuf = await response.arrayBuffer();
+    const audioBuf = await ctx.decodeAudioData(arrayBuf);
+    const source = ctx.createBufferSource();
+    source.buffer = audioBuf;
+    const gain = ctx.createGain();
+    gain.gain.value = 1;
+    source.connect(gain);
+    gain.connect(masterGain);
+    source.start(0);
+    activeSources[id] = { source, gainNode: gain, startTime: ctx.currentTime, duration: audioBuf.duration };
+    updatePlayingIndicator();
+    // visual feedback
+    const el = document.getElementById('pad-' + id);
+    if (el) {
+      el.classList.add('playing');
+      const bar = el.querySelector('.pad-progress');
+      if (bar) {
+        bar.style.transition = 'none';
+        bar.style.width = '0%';
+        requestAnimationFrame(() => {
+          bar.style.transition = `width ${audioBuf.duration}s linear`;
+          bar.style.width = '100%';
+        });
+      }
+    }
+    source.onended = () => {
+      delete activeSources[id];
+      updatePlayingIndicator();
+      const el2 = document.getElementById('pad-' + id);
+      if (el2) {
+        el2.classList.remove('playing');
+        const bar2 = el2.querySelector('.pad-progress');
+        if (bar2) { bar2.style.transition = 'none'; bar2.style.width = '0%'; }
+      }
+    };
+  } catch(e) {
+    toast('Could not play audio: ' + e.message);
+  }
+}
+
+function stopAll() {
+  Object.entries(activeSources).forEach(([id, s]) => {
+    try { s.source.stop(); } catch(e) {}
+    const el = document.getElementById('pad-' + id);
+    if (el) {
+      el.classList.remove('playing');
+      const bar = el.querySelector('.pad-progress');
+      if (bar) { bar.style.transition = 'none'; bar.style.width = '0%'; }
+    }
+  });
+  activeSources = {};
+  updatePlayingIndicator();
+}
+
+function updateMasterVol(v) {
+  masterVolume = parseFloat(v);
+  if (masterGain) masterGain.gain.value = masterVolume;
+  document.getElementById('masterVolVal').textContent = Math.round(masterVolume * 100) + '%';
+  savePads();
+}
+
+function updatePlayingIndicator() {
+  const count = Object.keys(activeSources).length;
+  const el = document.getElementById('playingIndicator');
+  el.textContent = `● ${count} playing`;
+  el.classList.toggle('active', count > 0);
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function renderPads() {
+  const grid = document.getElementById('padGrid');
+  const empty = document.getElementById('emptyBoard');
+  document.getElementById('boardTitle').textContent = document.getElementById('boardName').value || 'Soundboard';
+  if (!pads.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.innerHTML = pads.map(p => `
+    <div class="pad" id="pad-${p.id}" onclick="playPad('${p.id}')">
+      <div class="pad-color-bar" style="background:${p.color}"></div>
+      <div class="pad-label">${escHtml(p.label)}</div>
+      ${p.key ? `<div class="pad-key"><span class="key-badge">${p.key}</span></div>` : ''}
+      ${p.duration ? `<div class="pad-duration">${p.duration}s</div>` : ''}
+      <div class="pad-progress"></div>
+      <button class="pad-edit-btn" onclick="event.stopPropagation();openEdit('${p.id}')" title="Edit pad">&#9998;</button>
+    </div>`).join('');
+}
+
+function applyGridCols() {
+  const val = document.getElementById('gridCols').value;
+  const grid = document.getElementById('padGrid');
+  if (val === 'auto') {
+    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(140px, 1fr))';
+  } else {
+    grid.style.gridTemplateColumns = `repeat(${val}, 1fr)`;
+  }
+  savePads();
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── EDIT MODAL ─────────────────────────────────────────────────────────────
+function openEdit(id) {
+  const pad = pads.find(p => p.id === id);
+  if (!pad) return;
+  editingId = id;
+  editPendingAudio = null;
+  document.getElementById('editLabel').value = pad.label;
+  document.getElementById('editKey').value = pad.key || '';
+  document.getElementById('editColor').value = pad.color;
+  document.getElementById('editFileStatus').textContent = 'Keep existing audio';
+  document.getElementById('editFileInput').value = '';
+  document.getElementById('editModal').classList.add('open');
+}
+
+async function saveEdit() {
+  const pad = pads.find(p => p.id === editingId);
+  if (!pad) return;
+  const newKey = document.getElementById('editKey').value.trim().toUpperCase();
+  if (newKey && pads.find(p => p.key === newKey && p.id !== editingId)) {
+    toast(`Key "${newKey}" already in use`); return;
+  }
+  pad.label = document.getElementById('editLabel').value.trim() || pad.label;
+  pad.key = newKey;
+  pad.color = document.getElementById('editColor').value;
+  if (editPendingAudio) {
+    pad.audioData = editPendingAudio;
+    pad.duration = Math.round((await getAudioDuration(editPendingAudio)) * 10) / 10;
+  }
+  editingId = null;
+  closeModal();
+  renderPads();
+  savePads();
+  toast('Pad updated');
+}
+
+function deletePad() {
+  pads = pads.filter(p => p.id !== editingId);
+  if (activeSources[editingId]) {
+    try { activeSources[editingId].source.stop(); } catch(e) {}
+    delete activeSources[editingId];
+  }
+  editingId = null;
+  closeModal();
+  renderPads();
+  savePads();
+  updatePlayingIndicator();
+  toast('Pad deleted');
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('open');
+  editingId = null;
+  editPendingAudio = null;
+}
+
+document.getElementById('editModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('editModal')) closeModal();
+});
+
+// ── PERSIST (metadata only — audio stored as base64 in the pad objects) ─────────────
+function savePads() {
+  const data = {
+    boardName: document.getElementById('boardName').value,
+    masterVolume,
+    gridCols: document.getElementById('gridCols').value,
+    pads
+  };
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e) {
+    toast('Storage full — audio data may be too large');
+  }
+}
+
+function loadPads() {
+  const raw = localStorage.getItem(SAVE_KEY);
+  if (raw) {
+    try {
+      const d = JSON.parse(raw);
+      document.getElementById('boardName').value = d.boardName || 'Newscapes Live!';
+      masterVolume = d.masterVolume ?? 0.8;
+      document.getElementById('masterVol').value = masterVolume;
+      document.getElementById('masterVolVal').textContent = Math.round(masterVolume * 100) + '%';
+      if (d.gridCols) {
+        document.getElementById('gridCols').value = d.gridCols;
+        applyGridCols();
+      }
+      pads = d.pads || [];
+      renderPads();
+      return;
+    } catch(e) {}
+  }
+  // Default demo pads (no audio — visual only)
+  pads = [
+    { id: 'd1', label: 'Intro Music', key: 'Q', color: '#e00000', audioData: null, duration: null },
+    { id: 'd2', label: 'Applause', key: 'W', color: '#e07000', audioData: null, duration: null },
+    { id: 'd3', label: 'Air Horn', key: 'E', color: '#e0c000', audioData: null, duration: null },
+    { id: 'd4', label: 'Drum Roll', key: 'R', color: '#00a060', audioData: null, duration: null },
+    { id: 'd5', label: 'Sting', key: 'T', color: '#0060c0', audioData: null, duration: null },
+    { id: 'd6', label: 'Transition', key: 'Y', color: '#8000c0', audioData: null, duration: null },
+  ];
+  renderPads();
+}
+
+// ── EXPORT / IMPORT ───────────────────────────────────────────────────────────
+function exportBoard() {
+  const data = {
+    boardName: document.getElementById('boardName').value,
+    masterVolume,
+    gridCols: document.getElementById('gridCols').value,
+    pads,
+    exportedAt: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const name = (document.getElementById('boardName').value || 'soundboard').replace(/\s+/g,'-').toLowerCase();
+  a.href = url; a.download = name + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Board exported');
+}
+
+function importBoard(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const d = JSON.parse(ev.target.result);
+      document.getElementById('boardName').value = d.boardName || 'Imported Board';
+      masterVolume = d.masterVolume ?? 0.8;
+      document.getElementById('masterVol').value = masterVolume;
+      document.getElementById('masterVolVal').textContent = Math.round(masterVolume * 100) + '%';
+      if (d.gridCols) { document.getElementById('gridCols').value = d.gridCols; applyGridCols(); }
+      pads = d.pads || [];
+      stopAll();
+      renderPads();
+      savePads();
+      toast('Board imported — ' + pads.length + ' pads loaded');
+    } catch(err) { toast('Invalid board file'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function clearBoard() {
+  if (!pads.length) { toast('Board is already empty'); return; }
+  if (!confirm('Clear all pads? This cannot be undone.')) return;
+  stopAll();
+  pads = [];
+  renderPads();
+  savePads();
+  toast('Board cleared');
+}
+
+// ── KEYBOARD GLOBAL ────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  // Don't fire when typing in an input
+  if (['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
+  if (e.key === ' ') { e.preventDefault(); stopAll(); return; }
+  const key = e.key.toUpperCase();
+  const pad = pads.find(p => p.key === key);
+  if (pad && pad.audioData) playPad(pad.id);
+});
+
+// ── TOAST ──────────────────────────────────────────────────────────────────────
+function toast(msg, dur = 2200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+loadPads();
+</script>
+</body>
+</html>
