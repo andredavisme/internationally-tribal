@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 02 Activity — Idea Capture Board</title>
+  <style>
+    :root {
+      --black: #111;
+      --red: #e00;
+      --white: #f5f5f5;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--black);
+      color: var(--white);
+      line-height: 1.7;
+    }
+    header {
+      background: var(--black);
+      border-bottom: 4px solid var(--red);
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+    }
+    header .chapter-tag {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--red);
+      margin-bottom: 0.75rem;
+    }
+    header h1 {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    header h1 span { color: var(--red); }
+    header p {
+      margin-top: 0.75rem;
+      font-size: 1.05rem;
+      color: #888;
+      max-width: 650px;
+      margin-inline: auto;
+    }
+    .header-links {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .header-links a {
+      color: var(--red);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      text-decoration: none;
+      border: 1px solid var(--red);
+      padding: 0.4rem 1rem;
+      border-radius: 3px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .header-links a:hover { background: var(--red); color: white; }
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+    }
+    section { margin-bottom: 3.5rem; }
+    h2 {
+      font-size: 1.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--red);
+      border-left: 5px solid var(--red);
+      padding-left: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    h3 { font-size: 1.05rem; color: #ccc; margin: 1.5rem 0 0.5rem; }
+    p { margin-bottom: 1rem; color: #bbb; }
+    ul, ol { padding-left: 1.5rem; color: #999; margin-bottom: 1rem; }
+    li { margin-bottom: 0.5rem; }
+    a { color: var(--red); }
+    .callout {
+      background: #1a1a1a;
+      border-left: 4px solid var(--red);
+      padding: 1.25rem 1.5rem;
+      border-radius: 4px;
+      margin: 1.5rem 0;
+    }
+    .callout p { margin: 0; }
+    .callout strong { color: var(--white); }
+    .step {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .step-num {
+      display: inline-block;
+      background: var(--red);
+      color: white;
+      font-weight: bold;
+      font-size: 0.8rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+      margin-bottom: 0.6rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .step h3 { margin-top: 0; color: white; }
+    code {
+      background: #222;
+      color: #f88;
+      padding: 0.15em 0.4em;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    pre {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    pre code {
+      background: none;
+      color: #f88;
+      padding: 0;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    @media (max-width: 540px) { .concept-grid { grid-template-columns: 1fr; } }
+    .concept-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 1.25rem;
+    }
+    .concept-card h4 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--red);
+      margin-bottom: 0.5rem;
+    }
+    .concept-card p { color: #888; font-size: 0.88rem; margin: 0; }
+    .tag-row {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0;
+    }
+    .tag {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      color: #777;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .big-quote {
+      font-size: clamp(1.1rem, 3vw, 1.6rem);
+      font-style: italic;
+      color: var(--white);
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid #222;
+      border-bottom: 1px solid #222;
+      margin: 2rem 0;
+      line-height: 1.5;
+    }
+    .big-quote span { color: var(--red); }
+    .reflection {
+      background: #111;
+      border: 2px dashed #333;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+    .reflection p { color: #666; font-style: italic; }
+    .reflection ol { color: #666; }
+    .extend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .extend-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 1.25rem;
+    }
+    .extend-card h4 { color: white; font-size: 0.95rem; margin-bottom: 0.4rem; }
+    .extend-card p { font-size: 0.85rem; color: #666; margin: 0; }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #444;
+      font-size: 0.8rem;
+      border-top: 1px solid #1e1e1e;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="chapter-tag">Chapter 02 — Activity Guide</div>
+  <h1>Build an <span>Idea Capture</span> Board</h1>
+  <p>Learn arrays, objects, filtering, and dynamic list rendering by building a tool for collecting and organizing ideas in real time.</p>
+  <div class="header-links">
+    <a href="index.html">&#9654; Open the Board</a>
+    <a href="../../hub.html">&larr; All Chapters</a>
+    <a href="../01/activity.html">Chapter 01</a>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <h2>Why This Project?</h2>
+    <p>Chapter 01 stored a single piece of information — one intention. Chapter 02 levels that up by teaching you how to manage <strong>collections of data</strong>. Instead of one saved string, you now have many ideas, each with multiple properties.</p>
+    <p>This is where apps start to feel real. The second you move from one value to a list of structured values, you unlock dashboards, task boards, CRMs, note apps, playlists, shopping carts, and almost every useful interface on the web.</p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>Arrays</h4>
+        <p>Store multiple items in order. Your idea board is powered by an array of idea objects.</p>
+      </div>
+      <div class="concept-card">
+        <h4>Objects</h4>
+        <p>Each idea contains related properties like text, type, tag, and timestamp.</p>
+      </div>
+      <div class="concept-card">
+        <h4>filter()</h4>
+        <p>Show only ideas that match a chosen type or search term.</p>
+      </div>
+      <div class="concept-card">
+        <h4>map()</h4>
+        <p>Turn raw JavaScript data into visible HTML cards on the page.</p>
+      </div>
+    </div>
+
+    <div class="tag-row">
+      <span class="tag">Arrays</span>
+      <span class="tag">Objects</span>
+      <span class="tag">Filter</span>
+      <span class="tag">Map</span>
+      <span class="tag">localStorage</span>
+      <span class="tag">Dynamic Lists</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>The AI Angle</h2>
+    <p>When you prompt AI for a project like this, you're no longer just describing visuals or a single behavior. You're describing a <em>data model</em>. That means you have to think in terms of what each item is made of and how the interface should react when the data changes.</p>
+
+    <div class="callout">
+      <p><strong>This is a major shift:</strong> instead of saying "make this look cooler," you're saying "each idea should be an object with these properties, stored in an array, then filtered by type and search term." That's software thinking.</p>
+    </div>
+
+    <div class="big-quote">
+      &ldquo;Once you can describe the data,
+      <span>you can describe the app.</span>&rdquo;
+    </div>
+
+    <p>That’s why this chapter matters. It trains you to think like a builder, not just a user.</p>
+  </section>
+
+  <section>
+    <h2>Before You Build</h2>
+    <p>Decide what kind of ideas your board should hold before you open AI. Answer these first:</p>
+    <div class="reflection">
+      <ol>
+        <li>What kinds of ideas do you capture most often — content, features, questions, business ideas, story ideas?</li>
+        <li>What properties should every idea have? Just text, or also category, tag, date, priority?</li>
+        <li>How should ideas be sorted — newest first, oldest first, grouped by type?</li>
+        <li>What actions should each card allow — delete, duplicate, edit, archive?</li>
+        <li>What would make this board more useful than your phone notes app?</li>
+      </ol>
+      <p style="margin-top:1rem;">These answers are your spec. You’re teaching AI the shape of your app by first defining it for yourself.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Build It</h2>
+
+    <div class="step">
+      <span class="step-num">Phase 1</span>
+      <h3>Set up the layout</h3>
+      <p>Ask AI for a two-column interface: capture controls on the left, idea cards on the right. Keep the aesthetic consistent with the earlier chapters.</p>
+      <pre><code>Build a single-page idea board in vanilla HTML, CSS, and JavaScript.
+Use a dark layout with white text and red accents. The left side should
+have a textarea, a type dropdown, a short tag input, and buttons to add
+or clear ideas. The right side should display idea cards in a responsive grid.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 2</span>
+      <h3>Create the data structure</h3>
+      <p>Your app needs an array. Each new idea should become an object inside it. This is the heart of the chapter.</p>
+      <pre><code>Create a JavaScript array called ideas. When the user adds an idea,
+push a new object into the array with these properties: id, text,
+type, tag, and createdAt. Then save the array to localStorage.
+Load it again when the page opens.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 3</span>
+      <h3>Render cards dynamically</h3>
+      <p>Now the board needs to read the array and turn it into visible HTML. This is where <code>map()</code> becomes practical.</p>
+      <pre><code>Render the ideas array into a card grid. Each card should show the tag,
+the type, the idea text, and the time it was created. Use map() to build
+the HTML and inject it into the board container.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 4</span>
+      <h3>Add filtering and search</h3>
+      <p>Once a list exists, users need a way to narrow it down. This is where <code>filter()</code> stops being abstract and starts feeling useful.</p>
+      <pre><code>Add a type filter dropdown and a live search input. Show only ideas that
+match the selected type and search term. Search should look through the
+idea text, tag, and type. Update the board live as the user types.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 5</span>
+      <h3>Add card actions</h3>
+      <p>Give each idea card at least two actions. In this version, duplicate and delete make the data logic very clear.</p>
+      <pre><code>Add Duplicate and Delete buttons to each idea card. Delete removes the
+matching object from the array. Duplicate creates a new object based on
+the original with a new id and current time, then adds it to the top
+of the array.</code></pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>Concepts You Just Used</h2>
+    <ul>
+      <li><code>let ideas = []</code> — stores a growing collection of notes.</li>
+      <li><code>ideas.unshift(obj)</code> — adds new ideas to the top of the board.</li>
+      <li><code>ideas.filter(...)</code> — narrows the array based on conditions.</li>
+      <li><code>ideas.map(...)</code> — transforms objects into HTML strings.</li>
+      <li><code>JSON.stringify()</code> and <code>JSON.parse()</code> — save and load arrays from localStorage.</li>
+      <li><code>array.find()</code> — locate a single object to duplicate.</li>
+      <li><code>array.filter()</code> again — remove one object by keeping all the others.</li>
+    </ul>
+
+    <div class="callout">
+      <p><strong>This is one of the biggest thresholds in JavaScript.</strong> Once you understand arrays of objects and how to render them, you can build almost every data-driven interface that matters.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Reflect</h2>
+    <div class="reflection">
+      <ol>
+        <li>What was harder to describe to AI: the visual layout or the data behavior?</li>
+        <li>When did you first realize your board was really just an array being rendered?</li>
+        <li>Which action made the logic clearest — add, filter, duplicate, or delete?</li>
+        <li>What did AI misunderstand the first time, and how did you fix the prompt?</li>
+        <li>How would this project change if you stored ideas in Supabase instead of localStorage?</li>
+      </ol>
+      <p style="margin-top:1rem;">A big part of becoming a strong builder is learning to see the invisible structure beneath the interface.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Go Further</h2>
+    <div class="extend-grid">
+      <div class="extend-card">
+        <h4>Edit Cards</h4>
+        <p>Let users reopen a card, change the text, and save the updated object back into the array.</p>
+      </div>
+      <div class="extend-card">
+        <h4>Priority System</h4>
+        <p>Add a priority field like low, medium, and high, then sort the board by importance.</p>
+      </div>
+      <div class="extend-card">
+        <h4>Archive View</h4>
+        <p>Instead of deleting ideas, mark them archived and filter them out of the main board.</p>
+      </div>
+      <div class="extend-card">
+        <h4>Color Coding</h4>
+        <p>Change the card border color based on idea type to improve scanning.</p>
+      </div>
+      <div class="extend-card">
+        <h4>Export JSON</h4>
+        <p>Download the full array as a JSON file so students can see the raw data behind the UI.</p>
+      </div>
+      <div class="extend-card">
+        <h4>Drag Sort</h4>
+        <p>Allow ideas to be reordered manually and save the new array order back to localStorage.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  AI Creative Lab — Chapter 02 Activity — Internationally Tribal
+</footer>
+
+</body>
+</html>

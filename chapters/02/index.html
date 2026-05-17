@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 02 — Idea Capture Board</title>
+  <style>
+    :root {
+      --black: #111;
+      --red: #e00;
+      --white: #f5f5f5;
+      --panel: #1a1a1a;
+      --line: #2a2a2a;
+      --muted: #666;
+      --green: #4a9;
+      --yellow: #d9a441;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.9rem 1.5rem;
+      background: #111;
+      border-bottom: 2px solid #1e1e1e;
+      z-index: 20;
+    }
+    nav a {
+      color: var(--red);
+      text-decoration: none;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    nav span {
+      color: #444;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-align: center;
+      flex: 1;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 4.5rem auto 0;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+    .panel h2 {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--red);
+      margin-bottom: 0.85rem;
+    }
+    .panel-sub {
+      color: #555;
+      font-size: 0.78rem;
+      margin: -0.3rem 0 1rem;
+    }
+    textarea, input, select {
+      width: 100%;
+      background: #121212;
+      border: 1px solid #2f2f2f;
+      color: var(--white);
+      border-radius: 6px;
+      padding: 0.8rem 0.9rem;
+      font: inherit;
+      outline: none;
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    textarea:focus, input:focus, select:focus { border-color: var(--red); }
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+    .btn-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.9rem;
+    }
+    .btn {
+      background: transparent;
+      border: 1px solid #444;
+      color: #aaa;
+      font-family: inherit;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.6rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .btn:hover { border-color: var(--red); color: var(--white); }
+    .btn.primary { border-color: var(--red); color: var(--red); }
+    .btn.primary:hover { background: var(--red); color: white; }
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1rem;
+      font-size: 0.78rem;
+      color: #555;
+      flex-wrap: wrap;
+    }
+    .status { color: var(--green); }
+    .board-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .board-head h1 {
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      font-weight: 300;
+      letter-spacing: 0.03em;
+    }
+    .board-head p {
+      color: #666;
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+    }
+    .filter-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .search {
+      min-width: 220px;
+      max-width: 280px;
+    }
+    .ideas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .idea-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--red);
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      min-height: 200px;
+    }
+    .idea-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      align-items: start;
+    }
+    .idea-text {
+      color: var(--white);
+      font-size: 1rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: 1px solid #333;
+      color: #999;
+      white-space: nowrap;
+    }
+    .tag.concept { color: #bbb; }
+    .tag.content { color: #e7b85b; }
+    .tag.build { color: #7fd4ff; }
+    .tag.question { color: #d6a1ff; }
+    .idea-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      align-items: center;
+      color: #555;
+      font-size: 0.76rem;
+      margin-top: auto;
+      flex-wrap: wrap;
+    }
+    .card-actions {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .card-btn {
+      background: transparent;
+      border: 1px solid #333;
+      color: #777;
+      font-size: 0.72rem;
+      padding: 0.35rem 0.55rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .card-btn:hover { border-color: var(--red); color: var(--white); }
+    .empty {
+      background: #151515;
+      border: 1px dashed #2b2b2b;
+      color: #444;
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .summary-card {
+      background: #151515;
+      border: 1px solid #242424;
+      border-radius: 8px;
+      padding: 0.9rem;
+    }
+    .summary-label {
+      color: #555;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.35rem;
+    }
+    .summary-value {
+      font-size: 1.4rem;
+      font-weight: 300;
+      color: var(--white);
+    }
+    .hint {
+      color: var(--yellow);
+      font-size: 0.76rem;
+      margin-top: 0.7rem;
+    }
+    @media (max-width: 900px) {
+      .page { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      body { padding: 1rem; }
+      nav { padding: 0.8rem 1rem; }
+      nav span { display: none; }
+      .field-row, .summary-grid { grid-template-columns: 1fr; }
+      .search { min-width: 100%; max-width: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../../hub.html">&larr; All Chapters</a>
+  <span>Ch 02 — Idea Capture Board</span>
+  <a href="activity.html">&#128218; Activity Guide</a>
+</nav>
+
+<div class="page">
+  <aside class="panel">
+    <h2>Capture an Idea</h2>
+    <div class="panel-sub">Every note becomes an object in an array, then gets rendered back to the board.</div>
+
+    <textarea id="idea-input" placeholder="Drop a concept, question, content idea, or feature thought..."></textarea>
+
+    <div class="field-row">
+      <select id="idea-type">
+        <option value="concept">Concept</option>
+        <option value="content">Content</option>
+        <option value="build">Build</option>
+        <option value="question">Question</option>
+      </select>
+      <input id="idea-tag" type="text" maxlength="18" placeholder="Tag" />
+    </div>
+
+    <div class="btn-row">
+      <button class="btn primary" onclick="addIdea()">Add Idea</button>
+      <button class="btn" onclick="clearAllIdeas()">Clear All</button>
+    </div>
+
+    <div class="meta-row">
+      <span id="save-status" class="status">Saved to this browser</span>
+      <span id="idea-count">0 ideas</span>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-label">Total</div>
+        <div class="summary-value" id="sum-total">0</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Filtered</div>
+        <div class="summary-value" id="sum-filtered">0</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Latest</div>
+        <div class="summary-value" id="sum-latest">—</div>
+      </div>
+    </div>
+
+    <div class="hint">Tip: Try adding a mix of concepts, content ideas, and questions so you can see filtering in action.</div>
+  </aside>
+
+  <main>
+    <div class="board-head">
+      <div>
+        <h1>Idea Capture Board</h1>
+        <p>Practice arrays, object data, filtering, and dynamic DOM rendering.</p>
+      </div>
+      <div class="filter-row">
+        <select id="filter-type" onchange="renderIdeas()">
+          <option value="all">All Types</option>
+          <option value="concept">Concept</option>
+          <option value="content">Content</option>
+          <option value="build">Build</option>
+          <option value="question">Question</option>
+        </select>
+        <input id="search-input" class="search" type="text" placeholder="Search ideas..." oninput="renderIdeas()" />
+      </div>
+    </div>
+
+    <div id="ideas-grid" class="ideas-grid"></div>
+  </main>
+</div>
+
+<script>
+  const STORAGE_KEY = 'it_ideas_board';
+  let ideas = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+  function saveIdeas() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
+    document.getElementById('save-status').textContent = 'Saved to this browser';
+  }
+
+  function formatType(type) {
+    return type.charAt(0).toUpperCase() + type.slice(1);
+  }
+
+  function addIdea() {
+    const input = document.getElementById('idea-input');
+    const type = document.getElementById('idea-type');
+    const tag = document.getElementById('idea-tag');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const idea = {
+      id: Date.now(),
+      text,
+      type: type.value,
+      tag: tag.value.trim() || formatType(type.value),
+      createdAt: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    };
+
+    ideas.unshift(idea);
+    saveIdeas();
+    input.value = '';
+    tag.value = '';
+    renderIdeas();
+    input.focus();
+  }
+
+  function deleteIdea(id) {
+    ideas = ideas.filter(idea => idea.id !== id);
+    saveIdeas();
+    renderIdeas();
+  }
+
+  function duplicateIdea(id) {
+    const original = ideas.find(idea => idea.id === id);
+    if (!original) return;
+    const copy = {
+      ...original,
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      createdAt: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    };
+    ideas.unshift(copy);
+    saveIdeas();
+    renderIdeas();
+  }
+
+  function clearAllIdeas() {
+    if (!confirm('Clear the entire idea board?')) return;
+    ideas = [];
+    saveIdeas();
+    renderIdeas();
+  }
+
+  function getFilteredIdeas() {
+    const filterType = document.getElementById('filter-type').value;
+    const search = document.getElementById('search-input').value.trim().toLowerCase();
+
+    return ideas.filter(idea => {
+      const matchesType = filterType === 'all' || idea.type === filterType;
+      const haystack = `${idea.text} ${idea.tag} ${idea.type}`.toLowerCase();
+      const matchesSearch = !search || haystack.includes(search);
+      return matchesType && matchesSearch;
+    });
+  }
+
+  function renderIdeas() {
+    const grid = document.getElementById('ideas-grid');
+    const filtered = getFilteredIdeas();
+
+    document.getElementById('idea-count').textContent = `${ideas.length} idea${ideas.length === 1 ? '' : 's'}`;
+    document.getElementById('sum-total').textContent = ideas.length;
+    document.getElementById('sum-filtered').textContent = filtered.length;
+    document.getElementById('sum-latest').textContent = ideas[0] ? ideas[0].createdAt : '—';
+
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="empty">No ideas match this filter yet. Add one on the left or change the search.</div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(idea => `
+      <article class="idea-card">
+        <div class="idea-top">
+          <span class="tag ${idea.type}">${idea.tag}</span>
+          <span class="tag ${idea.type}">${formatType(idea.type)}</span>
+        </div>
+        <div class="idea-text">${escapeHtml(idea.text)}</div>
+        <div class="idea-meta">
+          <span>${idea.createdAt}</span>
+          <div class="card-actions">
+            <button class="card-btn" onclick="duplicateIdea(${idea.id})">Duplicate</button>
+            <button class="card-btn" onclick="deleteIdea(${idea.id})">Delete</button>
+          </div>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  document.getElementById('idea-input').addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') addIdea();
+  });
+
+  renderIdeas();
+</script>
+
+</body>
+</html>
