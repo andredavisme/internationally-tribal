@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 03 Activity — Invoice Generator</title>
+  <style>
+    :root { --black: #111; --red: #e00; --white: #f5f5f5; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--black); color: var(--white); line-height: 1.7; }
+    header { background: var(--black); border-bottom: 4px solid var(--red); padding: 3rem 2rem 2rem; text-align: center; }
+    header .chapter-tag { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--red); margin-bottom: .75rem; }
+    header h1 { font-size: clamp(1.8rem,5vw,3rem); letter-spacing: .04em; text-transform: uppercase; }
+    header h1 span { color: var(--red); }
+    header p { margin-top: .75rem; font-size: 1.05rem; color: #888; max-width: 600px; margin-inline: auto; }
+    .header-links { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+    .header-links a { color: var(--red); font-size: .8rem; text-transform: uppercase; letter-spacing: .07em; text-decoration: none; border: 1px solid var(--red); padding: .4rem 1rem; border-radius: 3px; transition: background .2s, color .2s; }
+    .header-links a:hover { background: var(--red); color: white; }
+    main { max-width: 860px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    section { margin-bottom: 3.5rem; }
+    h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: .08em; color: var(--red); border-left: 5px solid var(--red); padding-left: .75rem; margin-bottom: 1rem; }
+    h3 { font-size: 1.05rem; color: #ccc; margin: 1.5rem 0 .5rem; }
+    p { margin-bottom: 1rem; color: #bbb; }
+    ul, ol { padding-left: 1.5rem; color: #999; margin-bottom: 1rem; }
+    li { margin-bottom: .5rem; }
+    a { color: var(--red); }
+    .callout { background: #1a1a1a; border-left: 4px solid var(--red); padding: 1.25rem 1.5rem; border-radius: 4px; margin: 1.5rem 0; }
+    .callout p { margin: 0; }
+    .callout strong { color: var(--white); }
+    .step { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.5rem; margin-bottom: 1.25rem; }
+    .step-num { display: inline-block; background: var(--red); color: white; font-weight: bold; font-size: .8rem; padding: .2rem .6rem; border-radius: 3px; margin-bottom: .6rem; letter-spacing: .05em; text-transform: uppercase; }
+    .step h3 { margin-top: 0; color: white; }
+    code { background: #222; color: #f88; padding: .15em .4em; border-radius: 3px; font-size: .9em; }
+    pre { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.25rem; overflow-x: auto; margin: 1rem 0; }
+    pre code { background: none; color: #f88; padding: 0; font-size: .88rem; line-height: 1.6; }
+    .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+    @media (max-width:540px) { .concept-grid { grid-template-columns: 1fr; } }
+    .concept-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.25rem; }
+    .concept-card h4 { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--red); margin-bottom: .5rem; }
+    .concept-card p { color: #888; font-size: .88rem; margin: 0; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+    .tag { background: #1e1e1e; border: 1px solid #333; color: #777; font-size: .75rem; padding: .25rem .65rem; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; }
+    .big-quote { font-size: clamp(1.1rem,3vw,1.6rem); font-style: italic; color: var(--white); text-align: center; padding: 2rem 1rem; border-top: 1px solid #222; border-bottom: 1px solid #222; margin: 2rem 0; line-height: 1.5; }
+    .big-quote span { color: var(--red); }
+    .reflection { background: #111; border: 2px dashed #333; border-radius: 6px; padding: 1.5rem; margin-top: 1rem; }
+    .reflection p { color: #666; font-style: italic; }
+    .reflection ol { color: #666; }
+    .extend-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 1rem; margin-top: 1rem; }
+    .extend-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.25rem; }
+    .extend-card h4 { color: white; font-size: .95rem; margin-bottom: .4rem; }
+    .extend-card p { font-size: .85rem; color: #666; margin: 0; }
+    .up-next { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 2rem; margin-top: 3rem; display: flex; flex-direction: column; align-items: flex-start; gap: .75rem; }
+    .up-next-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--red); }
+    .up-next h3 { color: white; font-size: 1.2rem; margin: 0; }
+    .up-next p { color: #777; font-size: .88rem; margin: 0; }
+    .up-next a { display: inline-block; background: transparent; border: 1px solid var(--red); color: var(--red); font-size: .82rem; text-transform: uppercase; letter-spacing: .07em; text-decoration: none; padding: .5rem 1.25rem; border-radius: 4px; margin-top: .25rem; transition: background .2s, color .2s; }
+    .up-next a:hover { background: var(--red); color: white; }
+    footer { text-align: center; padding: 2rem; color: #444; font-size: .8rem; border-top: 1px solid #1e1e1e; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="chapter-tag">Chapter 03 — Activity Guide</div>
+  <h1>Build a <span>One-Click Invoice</span> Generator</h1>
+  <p>Learn form handling, live DOM rendering, and client-side PDF export — while building a professional tool you can use for real freelance work.</p>
+  <div class="header-links">
+    <a href="index.html">&#9654; Open the Generator</a>
+    <a href="../../hub.html">&larr; All Chapters</a>
+    <a href="../02/activity.html">Chapter 02</a>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <h2>Why This Project?</h2>
+    <p>Chapters 01 and 02 taught you how to save data to the browser. Chapter 03 teaches you how to <em>transform</em> data — take raw form inputs, apply math, and render a fully formatted document in real time. This is the pattern behind every report builder, dashboard, and document editor on the web.</p>
+    <p>The invoice generator has no backend, no database, no login. It runs entirely in the browser and produces a print-ready PDF via the browser’s native print dialog. That’s a professional deliverable built with nothing but HTML, CSS, and JavaScript.</p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>Form + Live Render</h4>
+        <p>Every <code>oninput</code> event on any field immediately re-renders the invoice preview. The form and the output are always in sync.</p>
+      </div>
+      <div class="concept-card">
+        <h4>Template Literals</h4>
+        <p>The entire invoice HTML is assembled as a JavaScript template literal — a string with embedded expressions. This is how real templating engines work under the hood.</p>
+      </div>
+      <div class="concept-card">
+        <h4>Arithmetic in JS</h4>
+        <p>Qty × Rate, subtotal, discount, tax, total due — all calculated live from input values. <code>parseFloat</code>, <code>toFixed</code>, and reducing an array of line items.</p>
+      </div>
+      <div class="concept-card">
+        <h4>window.print()</h4>
+        <p>The PDF export works by opening a new browser window with only the invoice HTML, applying print-optimized CSS, then calling <code>window.print()</code>. No libraries needed.</p>
+      </div>
+    </div>
+
+    <div class="tag-row">
+      <span class="tag">Forms</span>
+      <span class="tag">Template Literals</span>
+      <span class="tag">Math</span>
+      <span class="tag">PDF Export</span>
+      <span class="tag">localStorage</span>
+      <span class="tag">JavaScript</span>
+      <span class="tag">GitHub Pages</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>The AI Angle for This Chapter</h2>
+    <p>In Chapter 02, AI helped you build a system of components. Here, the challenge is precision — the math has to be exactly right, the layout has to survive edge cases (no tax, no discount, one line item, twenty line items), and the print output has to look professional.</p>
+
+    <div class="callout">
+      <p><strong>AI is excellent at arithmetic logic</strong> — but you need to specify every edge case. What happens when qty is 0? When the rate field is empty? When discount is greater than 100%? Writing these constraints into your prompts is what separates a working tool from a fragile demo.</p>
+    </div>
+
+    <div class="big-quote">
+      &ldquo;A prompt without edge cases
+      <span>is a feature without a safety net.</span>&rdquo;
+    </div>
+
+    <p>Before prompting the math section, define your edge cases:</p>
+    <ul>
+      <li>What should the total show if there are no line items?</li>
+      <li>Should discount apply before or after tax? (It matters.)</li>
+      <li>What happens if the user types letters into the rate field?</li>
+      <li>How many decimal places should money values display?</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Before You Build — Map the Data Flow</h2>
+    <p>This app has a clear one-way data flow: inputs → calculation → render. Trace it before you build:</p>
+    <div class="reflection">
+      <ol>
+        <li>List every piece of information on the invoice. Group them: sender info, client info, line items, totals, metadata.</li>
+        <li>Which fields are typed once and stay fixed? Which ones recalculate every time something changes?</li>
+        <li>Walk through the math: if you have 3 line items, a 10% discount, and 8% tax, what is the order of operations to get the total?</li>
+        <li>What’s the difference between the invoice layout in the browser (dark background, form on the left) and the printed version (white, no form)? How would you handle that with CSS?</li>
+        <li>Where does localStorage fit in this app? What specifically should it save and when?</li>
+      </ol>
+      <p style="margin-top:1rem;">If you can answer these five questions, your prompts will be surgical rather than exploratory — and your app will work correctly on the first real-world use.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Build It</h2>
+
+    <div class="step">
+      <span class="step-num">Phase 1</span>
+      <h3>Scaffold the split-pane layout</h3>
+      <p>This app uses a two-column grid: the form on the left, the live invoice preview on the right. The preview is a white “paper” card on a dark background — a visual metaphor that makes the print-ready output obvious at a glance.</p>
+      <pre><code>Build a two-column layout. Left column: a dark scrollable form pane.
+Right column: a dark background with a white centered "invoice sheet"
+div that looks like a piece of paper. Nav bar at top with links.
+No frameworks. Vanilla HTML/CSS/JS only. Color palette: #111 background,
+#e00 red accents, white paper for the invoice sheet.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 2</span>
+      <h3>Build the form fields and wire oninput</h3>
+      <p>Add all the form fields grouped by section: From, Bill To, Invoice Details, Line Items, Tax &amp; Notes. Every input field should call a <code>render()</code> function on each keystroke. Don’t build the render function yet — just wire the event and confirm it fires.</p>
+      <pre><code>Add form fields in grouped sections: sender name/email/address,
+client name/email/address, invoice number, issue date, due date,
+currency selector, tax rate %, discount %, and notes textarea.
+Every input should call render() on oninput/onchange.
+Also add an "+ Add Line" button that appends a new row with
+description, qty, rate inputs and a delete button.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 3</span>
+      <h3>Build the render() function</h3>
+      <p>This is the core of the app. The render function reads all current form values, calculates totals, and rebuilds the entire invoice sheet HTML using a template literal. It runs on every input change.</p>
+      <pre><code>Write a render() function that:
+1. Reads all form field values
+2. Calculates: subtotal (sum of qty*rate), discount amount,
+   taxable amount, tax amount, total due
+3. Builds the invoice HTML as a template literal string
+4. Sets document.getElementById('invoice-sheet').innerHTML
+   to that string
+Money values should always show 2 decimal places.
+If a number field is empty, treat it as 0.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 4</span>
+      <h3>Add PDF export via window.print()</h3>
+      <p>The print export works by opening a new window containing only the invoice HTML with its own embedded print CSS, then triggering the browser’s print dialog. The user saves as PDF from there. No libraries, no server.</p>
+      <pre><code>Write a printInvoice() function that:
+1. Clones the invoice sheet HTML
+2. Opens a new window with window.open()
+3. Writes a complete HTML document to that window including
+   all necessary CSS (white background, proper typography,
+   no dark UI elements)
+4. Calls window.print() after a short timeout to ensure
+   the styles have loaded
+The printed output should look like a real invoice on white paper.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 5</span>
+      <h3>Save draft to localStorage + polish</h3>
+      <p>Add a Save Draft button that serializes the entire form state — including all line items — to localStorage. On page load, restore that state if it exists. Then review the edge cases: empty fields, single line item, zero tax, large line item counts.</p>
+      <pre><code>Add saveForm() that stores all field values and the line items
+array to localStorage as a JSON object. Add loadForm() that
+runs on page init — if saved data exists, populate all fields
+and recreate line item rows. If no saved data, load a set of
+default example values so the invoice looks complete from the
+first visit.</code></pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>Concepts You Just Used</h2>
+    <ul>
+      <li><code>oninput</code> / <code>onchange</code> — fire a function every time a form field changes</li>
+      <li><code>parseFloat(value || 0)</code> — safely convert a possibly-empty string to a number</li>
+      <li><code>array.reduce((sum, item) =&gt; sum + item.value, 0)</code> — sum an array of line item amounts</li>
+      <li><code>number.toFixed(2)</code> — format a number to exactly 2 decimal places</li>
+      <li>Template literals (<code>`...${expression}...`</code>) — build complex HTML strings with embedded logic</li>
+      <li><code>element.innerHTML = htmlString</code> — replace the entire contents of a container</li>
+      <li><code>window.open() + window.print()</code> — trigger the browser’s native print/PDF dialog</li>
+      <li><code>JSON.stringify / JSON.parse</code> with localStorage — persist a complex object between sessions</li>
+    </ul>
+
+    <div class="callout">
+      <p><strong>This chapter introduced reactive rendering</strong> — the idea that the UI is always a function of the current data. You didn’t manually update individual DOM elements; you re-rendered the whole output from scratch on every change. This is exactly how React, Vue, and Svelte work — just with more machinery around it.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Reflect</h2>
+    <div class="reflection">
+      <ol>
+        <li>What’s the difference between updating one DOM element and re-rendering the whole invoice on every change? What are the tradeoffs?</li>
+        <li>How did you handle the case where a field is empty vs. zero? Is there a difference?</li>
+        <li>The print export duplicates the CSS. What’s a cleaner way to handle this that you could prompt AI to implement?</li>
+        <li>If you were building this for a client who needed to send 50 invoices a month, what would you add first?</li>
+        <li>What surprised you about how simple the PDF export was? What can’t it do that a real PDF library could?</li>
+      </ol>
+      <p style="margin-top:1rem;">The reactive render pattern you built here is the foundation of every modern UI framework. You built it from scratch — which means you’ll understand those frameworks faster than anyone who learned them without this context.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Go Further</h2>
+    <div class="extend-grid">
+      <div class="extend-card">
+        <h4>&#128233; Email Draft</h4>
+        <p>Add a button that opens a <code>mailto:</code> link pre-filled with the client’s email and a summary of the invoice total.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128196; Multiple Invoices</h4>
+        <p>Add a saved invoice list — each save creates a new numbered record in localStorage. Browse and reload past invoices.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#127981; Logo Upload</h4>
+        <p>Let the user upload a logo image that appears in the invoice header. Store it as a base64 string in localStorage.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128176; Recurring Items</h4>
+        <p>Save a library of frequently-used line items. One click inserts them into the current invoice.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#127760; Multi-Currency</h4>
+        <p>Use the Fetch API to pull live exchange rates and convert the total into a second currency on the invoice.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128203; Copy as Text</h4>
+        <p>Add a button that copies the invoice as plain text to the clipboard — useful for pasting into emails or Slack.</p>
+      </div>
+    </div>
+
+    <div class="up-next">
+      <span class="up-next-label">Up Next — Chapter 04</span>
+      <h3>Animated Portfolio Page</h3>
+      <p>Build a personal portfolio with scroll-triggered animations, a project grid, and a contact form — all deployable on GitHub Pages. You’ll learn CSS animations, Intersection Observer, and layout design.</p>
+      <a href="../../hub.html">Start Chapter 04 &rarr;</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>AI Creative Lab — Chapter 03 Activity — Internationally Tribal</footer>
+
+</body>
+</html>
