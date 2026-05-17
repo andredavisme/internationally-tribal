@@ -55,7 +55,17 @@
       letter-spacing: 0.12em;
       color: var(--red);
       margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
     }
+    #autosave-indicator {
+      font-size: 0.65rem;
+      color: #444;
+      letter-spacing: 0.06em;
+      transition: color 0.4s;
+    }
+    #autosave-indicator.saved { color: #3a3; }
     .field-group {
       margin-bottom: 1.75rem;
     }
@@ -296,7 +306,10 @@
 
   <!-- FORM -->
   <div class="form-pane">
-    <div class="pane-title">Build Your Invoice</div>
+    <div class="pane-title">
+      Build Your Invoice
+      <span id="autosave-indicator">&#9679; auto-saved</span>
+    </div>
 
     <!-- SENDER -->
     <div class="field-group">
@@ -356,7 +369,7 @@
 
     <div class="btn-row">
       <button class="btn primary" onclick="printInvoice()">&#8595; Download PDF</button>
-      <button class="btn" onclick="saveForm()">&#128190; Save Draft</button>
+      <button class="btn" onclick="saveForm(true)">&#128190; Save Draft</button>
       <button class="btn" onclick="clearForm()">Clear</button>
     </div>
   </div>
@@ -374,6 +387,7 @@
 <script>
   const SAVE_KEY = 'it_ch03_draft';
   let lines = [];
+  let autoSaveTimer = null;
 
   function addLine(data) {
     const id = data?.id || Date.now().toString();
@@ -483,6 +497,10 @@
       <div class="inv-totals">${totalsHTML}</div>
       ${g('inv-notes') ? `<div class="inv-notes"><div class="inv-notes-label">Notes</div>${g('inv-notes')}</div>` : ''}
     `;
+
+    // Auto-save: debounced 800ms after last change
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(() => saveForm(false), 800);
   }
 
   function printInvoice() {
@@ -515,7 +533,7 @@
     setTimeout(() => { win.focus(); win.print(); }, 400);
   }
 
-  function saveForm() {
+  function saveForm(notify = false) {
     const data = {
       fromName: g('from-name'), fromEmail: g('from-email'), fromAddress: g('from-address'),
       toName: g('to-name'), toEmail: g('to-email'), toAddress: g('to-address'),
@@ -524,7 +542,12 @@
       notes: g('inv-notes'), lines
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-    showToast('\u2705 Draft saved');
+
+    const indicator = document.getElementById('autosave-indicator');
+    indicator.classList.add('saved');
+    setTimeout(() => indicator.classList.remove('saved'), 1500);
+
+    if (notify) showToast('\u2705 Draft saved');
   }
 
   function loadForm() {
