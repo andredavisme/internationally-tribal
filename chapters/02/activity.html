@@ -40,7 +40,7 @@
       margin-top: 0.75rem;
       font-size: 1.05rem;
       color: #888;
-      max-width: 650px;
+      max-width: 600px;
       margin-inline: auto;
     }
     .header-links {
@@ -62,6 +62,7 @@
       transition: background 0.2s, color 0.2s;
     }
     .header-links a:hover { background: var(--red); color: white; }
+
     main {
       max-width: 860px;
       margin: 0 auto;
@@ -82,6 +83,7 @@
     ul, ol { padding-left: 1.5rem; color: #999; margin-bottom: 1rem; }
     li { margin-bottom: 0.5rem; }
     a { color: var(--red); }
+
     .callout {
       background: #1a1a1a;
       border-left: 4px solid var(--red);
@@ -91,6 +93,7 @@
     }
     .callout p { margin: 0; }
     .callout strong { color: var(--white); }
+
     .step {
       background: #1a1a1a;
       border: 1px solid #2a2a2a;
@@ -111,6 +114,7 @@
       text-transform: uppercase;
     }
     .step h3 { margin-top: 0; color: white; }
+
     code {
       background: #222;
       color: #f88;
@@ -133,6 +137,7 @@
       font-size: 0.88rem;
       line-height: 1.6;
     }
+
     .concept-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -154,6 +159,7 @@
       margin-bottom: 0.5rem;
     }
     .concept-card p { color: #888; font-size: 0.88rem; margin: 0; }
+
     .tag-row {
       display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0;
     }
@@ -167,6 +173,7 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
+
     .big-quote {
       font-size: clamp(1.1rem, 3vw, 1.6rem);
       font-style: italic;
@@ -179,6 +186,7 @@
       line-height: 1.5;
     }
     .big-quote span { color: var(--red); }
+
     .reflection {
       background: #111;
       border: 2px dashed #333;
@@ -188,6 +196,7 @@
     }
     .reflection p { color: #666; font-style: italic; }
     .reflection ol { color: #666; }
+
     .extend-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -202,6 +211,42 @@
     }
     .extend-card h4 { color: white; font-size: 0.95rem; margin-bottom: 0.4rem; }
     .extend-card p { font-size: 0.85rem; color: #666; margin: 0; }
+
+    .up-next {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 2rem;
+      margin-top: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .up-next-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--red);
+    }
+    .up-next h3 { color: white; font-size: 1.2rem; margin: 0; }
+    .up-next p { color: #777; font-size: 0.88rem; margin: 0; }
+    .up-next a {
+      display: inline-block;
+      background: transparent;
+      border: 1px solid var(--red);
+      color: var(--red);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      text-decoration: none;
+      padding: 0.5rem 1.25rem;
+      border-radius: 4px;
+      margin-top: 0.25rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    .up-next a:hover { background: var(--red); color: white; }
+
     footer {
       text-align: center;
       padding: 2rem;
@@ -216,7 +261,7 @@
 <header>
   <div class="chapter-tag">Chapter 02 — Activity Guide</div>
   <h1>Build an <span>Idea Capture</span> Board</h1>
-  <p>Learn arrays, objects, filtering, and dynamic list rendering by building a tool for collecting and organizing ideas in real time.</p>
+  <p>Learn DOM creation, drag-and-drop, and CRUD with localStorage — while building a visual thinking tool you'll use every day.</p>
   <div class="header-links">
     <a href="index.html">&#9654; Open the Board</a>
     <a href="../../hub.html">&larr; All Chapters</a>
@@ -226,181 +271,224 @@
 
 <main>
 
+  <!-- WHY THIS MATTERS -->
   <section>
     <h2>Why This Project?</h2>
-    <p>Chapter 01 stored a single piece of information — one intention. Chapter 02 levels that up by teaching you how to manage <strong>collections of data</strong>. Instead of one saved string, you now have many ideas, each with multiple properties.</p>
-    <p>This is where apps start to feel real. The second you move from one value to a list of structured values, you unlock dashboards, task boards, CRMs, note apps, playlists, shopping carts, and almost every useful interface on the web.</p>
+    <p>Chapter 01 taught you how to save and update a single value in the browser. This chapter teaches you how to manage a <em>collection</em> of things — notes — each with its own data, position, and style. That shift from one item to many is one of the most important transitions in frontend development.</p>
+    <p>The example board is pre-loaded with real show-prep notes for <a href="https://andredavisme.github.io/newscapes-live/" target="_blank">Newscapes Live!</a> — a working demonstration that this tool has a real use case beyond the classroom. Your job is to understand how it works, then make it your own.</p>
 
     <div class="concept-grid">
       <div class="concept-card">
-        <h4>Arrays</h4>
-        <p>Store multiple items in order. Your idea board is powered by an array of idea objects.</p>
+        <h4>Dynamic DOM Creation</h4>
+        <p>Every sticky note is a piece of HTML built in JavaScript and inserted into the page at runtime — not written in the HTML file at all.</p>
       </div>
       <div class="concept-card">
-        <h4>Objects</h4>
-        <p>Each idea contains related properties like text, type, tag, and timestamp.</p>
+        <h4>Drag-and-Drop API</h4>
+        <p>Mouse events (<code>mousedown</code>, <code>mousemove</code>, <code>mouseup</code>) track where the user grabs a note and move it across the canvas in real time.</p>
       </div>
       <div class="concept-card">
-        <h4>filter()</h4>
-        <p>Show only ideas that match a chosen type or search term.</p>
+        <h4>Array CRUD</h4>
+        <p>The notes live in a JavaScript array. Create, read, update, and delete operations on that array — then saved to localStorage — are the pattern behind every data-driven app.</p>
       </div>
       <div class="concept-card">
-        <h4>map()</h4>
-        <p>Turn raw JavaScript data into visible HTML cards on the page.</p>
+        <h4>localStorage with Objects</h4>
+        <p>Unlike Chapter 01 where you saved a single string, here you save an entire array of objects using <code>JSON.stringify</code> and <code>JSON.parse</code>.</p>
       </div>
     </div>
 
     <div class="tag-row">
+      <span class="tag">JavaScript</span>
+      <span class="tag">DOM</span>
+      <span class="tag">Drag &amp; Drop</span>
       <span class="tag">Arrays</span>
-      <span class="tag">Objects</span>
-      <span class="tag">Filter</span>
-      <span class="tag">Map</span>
+      <span class="tag">JSON</span>
       <span class="tag">localStorage</span>
-      <span class="tag">Dynamic Lists</span>
+      <span class="tag">GitHub Pages</span>
     </div>
   </section>
 
+  <!-- AI ANGLE -->
   <section>
-    <h2>The AI Angle</h2>
-    <p>When you prompt AI for a project like this, you're no longer just describing visuals or a single behavior. You're describing a <em>data model</em>. That means you have to think in terms of what each item is made of and how the interface should react when the data changes.</p>
+    <h2>The AI Angle for This Chapter</h2>
+    <p>In Chapter 01, you described single behaviors to AI. Here, you're describing a <em>system</em> — multiple components (notes, canvas, toolbar) that interact with each other. AI can scaffold the system, but you have to understand how the pieces connect.</p>
 
     <div class="callout">
-      <p><strong>This is a major shift:</strong> instead of saying "make this look cooler," you're saying "each idea should be an object with these properties, stored in an array, then filtered by type and search term." That's software thinking.</p>
+      <p><strong>When building systems with AI,</strong> always start with the data model. If you can describe what a single note looks like as a JavaScript object — its id, color, text, position — you've done the hardest part of the prompt. Everything else is display logic built around that model.</p>
     </div>
 
     <div class="big-quote">
-      &ldquo;Once you can describe the data,
-      <span>you can describe the app.</span>&rdquo;
+      &ldquo;The data model is the skeleton.
+      <span>AI can build the body once you've drawn the bones.</span>&rdquo;
     </div>
 
-    <p>That’s why this chapter matters. It trains you to think like a builder, not just a user.</p>
+    <p>Before prompting, define your note object in plain English:</p>
+    <ul>
+      <li>What information does one note need to store?</li>
+      <li>How does the app know where on the canvas to place it?</li>
+      <li>What happens to the note array when the user deletes one?</li>
+      <li>How does the board restore itself after a page reload?</li>
+    </ul>
+    <p>If you can answer these four questions, you're ready to prompt.</p>
   </section>
 
+  <!-- BEFORE YOU BUILD -->
   <section>
-    <h2>Before You Build</h2>
-    <p>Decide what kind of ideas your board should hold before you open AI. Answer these first:</p>
+    <h2>Before You Build — Design the Data</h2>
+    <p>Write out what a single note object would look like if you were storing it in JavaScript. Don't worry about the code syntax — just describe the fields:</p>
+
     <div class="reflection">
       <ol>
-        <li>What kinds of ideas do you capture most often — content, features, questions, business ideas, story ideas?</li>
-        <li>What properties should every idea have? Just text, or also category, tag, date, priority?</li>
-        <li>How should ideas be sorted — newest first, oldest first, grouped by type?</li>
-        <li>What actions should each card allow — delete, duplicate, edit, archive?</li>
-        <li>What would make this board more useful than your phone notes app?</li>
+        <li>What's the minimum information a note needs to be recreated exactly after a page reload?</li>
+        <li>How would you tell apart two notes that have the exact same text?</li>
+        <li>If you wanted to filter notes by category later, what field would you add now?</li>
+        <li>How does the canvas know to place a note at the same position it was dragged to — even after closing and reopening the browser?</li>
+        <li>What should happen to the notes array when a user deletes a note? Walk through each step.</li>
       </ol>
-      <p style="margin-top:1rem;">These answers are your spec. You’re teaching AI the shape of your app by first defining it for yourself.</p>
+      <p style="margin-top:1rem;">These questions define your data model. The code is just a translation of these answers into JavaScript.</p>
     </div>
   </section>
 
+  <!-- BUILD PHASES -->
   <section>
     <h2>Build It</h2>
 
     <div class="step">
       <span class="step-num">Phase 1</span>
-      <h3>Set up the layout</h3>
-      <p>Ask AI for a two-column interface: capture controls on the left, idea cards on the right. Keep the aesthetic consistent with the earlier chapters.</p>
-      <pre><code>Build a single-page idea board in vanilla HTML, CSS, and JavaScript.
-Use a dark layout with white text and red accents. The left side should
-have a textarea, a type dropdown, a short tag input, and buttons to add
-or clear ideas. The right side should display idea cards in a responsive grid.</code></pre>
+      <h3>Scaffold the canvas layout</h3>
+      <p>Create <code>chapters/02/index.html</code>. The page needs a fixed nav bar, a toolbar row, and a full-screen canvas area below. This is a different layout than Chapter 01 — the canvas takes all remaining space.</p>
+      <pre><code>Build a single HTML page with a dark background (#111). At the
+top: a fixed nav bar with links to hub and activity guide. Below
+it: a toolbar row with an "+ Add Note" button and 5 color swatches.
+Below that: a full-height, full-width canvas div (position:relative,
+overflow:hidden) where sticky notes will be placed. No frameworks.
+Vanilla HTML, CSS, JavaScript only.</code></pre>
     </div>
 
     <div class="step">
       <span class="step-num">Phase 2</span>
-      <h3>Create the data structure</h3>
-      <p>Your app needs an array. Each new idea should become an object inside it. This is the heart of the chapter.</p>
-      <pre><code>Create a JavaScript array called ideas. When the user adds an idea,
-push a new object into the array with these properties: id, text,
-type, tag, and createdAt. Then save the array to localStorage.
-Load it again when the page opens.</code></pre>
+      <h3>Define the note data model and render one note</h3>
+      <p>Before writing any drag logic, get a single note rendering correctly. Define the object shape first, then ask AI to build the <code>addNote(data)</code> function that creates the DOM element and appends it to the canvas.</p>
+      <pre><code>A note object has these fields: id (string), color (hex string),
+text (string), tag (string), x (number), y (number).
+
+Write an addNote(data) function that creates a div positioned
+absolutely on the canvas at data.x, data.y. The note has a
+colored header bar (using data.color) showing a label and a
+delete button, and a body with a textarea for text and a small
+editable tag line at the bottom. Clicking the delete button
+removes the note from the DOM.</code></pre>
     </div>
 
     <div class="step">
       <span class="step-num">Phase 3</span>
-      <h3>Render cards dynamically</h3>
-      <p>Now the board needs to read the array and turn it into visible HTML. This is where <code>map()</code> becomes practical.</p>
-      <pre><code>Render the ideas array into a card grid. Each card should show the tag,
-the type, the idea text, and the time it was created. Use map() to build
-the HTML and inject it into the board container.</code></pre>
+      <h3>Add drag-and-drop</h3>
+      <p>This is the most technically interesting phase. Drag behavior in vanilla JS uses three mouse events working together. Walk through the logic before prompting: mousedown records the grab offset, mousemove repositions the note, mouseup drops it and saves the new position.</p>
+      <pre><code>Add drag-and-drop to each note. When the user mousedown on the
+note header, record the offset between the mouse position and the
+note's top-left corner. On mousemove (on the document, not just
+the note), reposition the note to follow the cursor using that
+offset. On mouseup, stop dragging and save the note's new x and y
+position to the notes array. The note should not be draggable
+by clicking on the textarea or the delete button.</code></pre>
     </div>
 
     <div class="step">
       <span class="step-num">Phase 4</span>
-      <h3>Add filtering and search</h3>
-      <p>Once a list exists, users need a way to narrow it down. This is where <code>filter()</code> stops being abstract and starts feeling useful.</p>
-      <pre><code>Add a type filter dropdown and a live search input. Show only ideas that
-match the selected type and search term. Search should look through the
-idea text, tag, and type. Update the board live as the user types.</code></pre>
+      <h3>CRUD + localStorage persistence</h3>
+      <p>Now wire up the full data layer: the notes array, save/load from localStorage using JSON, and the color picker in the toolbar. This is the moment the board becomes a real tool — it remembers everything.</p>
+      <pre><code>Maintain a `notes` array. The addNote function should push new
+note objects into the array and call save(). The deleteNote
+function should filter the note out and call save(). A save()
+function stringifies the array to localStorage. A load()
+function on page init reads it back, parses it, and calls
+addNote for each entry — restoring the board exactly as left.
+If localStorage is empty, load a set of 4-6 default example
+notes positioned across the canvas.</code></pre>
     </div>
 
     <div class="step">
       <span class="step-num">Phase 5</span>
-      <h3>Add card actions</h3>
-      <p>Give each idea card at least two actions. In this version, duplicate and delete make the data logic very clear.</p>
-      <pre><code>Add Duplicate and Delete buttons to each idea card. Delete removes the
-matching object from the array. Duplicate creates a new object based on
-the original with a new id and current time, then adds it to the top
-of the array.</code></pre>
+      <h3>Polish, brand it, and publish</h3>
+      <p>Review the board as a first-time user would see it. Consider:</p>
+      <ul>
+        <li>Is it clear what the color swatches do before you click one?</li>
+        <li>Does the board feel responsive — do notes drag smoothly without lag?</li>
+        <li>Is there a visual cue when the board is empty vs. populated?</li>
+        <li>Are delete actions easy to trigger accidentally? Should there be a confirmation?</li>
+      </ul>
+      <p>Pre-load your own example notes — maybe show-prep items for a project, stream, or brand you're actually working on. Then push to GitHub Pages.</p>
     </div>
   </section>
 
+  <!-- KEY CONCEPTS -->
   <section>
     <h2>Concepts You Just Used</h2>
+    <p>Find each of these patterns in your finished code. Understanding the location of a pattern in your own code is how you start to build a mental map of how apps are structured.</p>
     <ul>
-      <li><code>let ideas = []</code> — stores a growing collection of notes.</li>
-      <li><code>ideas.unshift(obj)</code> — adds new ideas to the top of the board.</li>
-      <li><code>ideas.filter(...)</code> — narrows the array based on conditions.</li>
-      <li><code>ideas.map(...)</code> — transforms objects into HTML strings.</li>
-      <li><code>JSON.stringify()</code> and <code>JSON.parse()</code> — save and load arrays from localStorage.</li>
-      <li><code>array.find()</code> — locate a single object to duplicate.</li>
-      <li><code>array.filter()</code> again — remove one object by keeping all the others.</li>
+      <li><code>document.createElement('div')</code> — creates a new DOM element in JavaScript</li>
+      <li><code>element.innerHTML = `...`</code> — sets HTML content, including nested elements and event handlers</li>
+      <li><code>element.style.left / .top</code> — positions an absolutely placed element on the page</li>
+      <li><code>mousedown / mousemove / mouseup</code> — the three events that compose any drag interaction</li>
+      <li><code>JSON.stringify(array)</code> — converts an array of objects to a string for localStorage</li>
+      <li><code>JSON.parse(string)</code> — converts that string back to a live JavaScript array on load</li>
+      <li><code>array.filter(fn)</code> — returns a new array with the matching item removed (used for delete)</li>
     </ul>
 
     <div class="callout">
-      <p><strong>This is one of the biggest thresholds in JavaScript.</strong> Once you understand arrays of objects and how to render them, you can build almost every data-driven interface that matters.</p>
+      <p><strong>The gap between Chapter 01 and Chapter 02</strong> is the gap between saving a value and saving a data structure. That gap is the entry point to understanding databases, APIs, and every app that manages more than one thing at a time.</p>
     </div>
   </section>
 
+  <!-- REFLECTION -->
   <section>
     <h2>Reflect</h2>
     <div class="reflection">
       <ol>
-        <li>What was harder to describe to AI: the visual layout or the data behavior?</li>
-        <li>When did you first realize your board was really just an array being rendered?</li>
-        <li>Which action made the logic clearest — add, filter, duplicate, or delete?</li>
-        <li>What did AI misunderstand the first time, and how did you fix the prompt?</li>
-        <li>How would this project change if you stored ideas in Supabase instead of localStorage?</li>
+        <li>What was the hardest part of describing the drag behavior to AI in plain language?</li>
+        <li>How did defining the note object shape first change the quality of your prompts?</li>
+        <li>What did AI get wrong the first time you asked for drag-and-drop? How did you correct it?</li>
+        <li>Compare saving a single string (Ch 01) to saving an array of objects (Ch 02). What's fundamentally different?</li>
+        <li>What would break in your board if you forgot the <code>JSON.parse</code> on load? Walk through it.</li>
       </ol>
-      <p style="margin-top:1rem;">A big part of becoming a strong builder is learning to see the invisible structure beneath the interface.</p>
+      <p style="margin-top:1rem;">The drag-and-drop bug you fixed in this chapter is the kind of bug you'll recognize immediately in every project going forward. That's how expertise compounds.</p>
     </div>
   </section>
 
+  <!-- GO FURTHER -->
   <section>
     <h2>Go Further</h2>
     <div class="extend-grid">
       <div class="extend-card">
-        <h4>Edit Cards</h4>
-        <p>Let users reopen a card, change the text, and save the updated object back into the array.</p>
+        <h4>&#128260; Export Board</h4>
+        <p>Add a button that exports all notes as a formatted plain-text or markdown file the user can download or paste anywhere.</p>
       </div>
       <div class="extend-card">
-        <h4>Priority System</h4>
-        <p>Add a priority field like low, medium, and high, then sort the board by importance.</p>
+        <h4>&#128269; Filter by Color</h4>
+        <p>Add a filter bar that shows only notes of a selected color. Use <code>display:none</code> to hide the rest.</p>
       </div>
       <div class="extend-card">
-        <h4>Archive View</h4>
-        <p>Instead of deleting ideas, mark them archived and filter them out of the main board.</p>
+        <h4>&#128247; Snapshot</h4>
+        <p>Use the <code>html2canvas</code> library to capture the board as a PNG the user can download or share.</p>
       </div>
       <div class="extend-card">
-        <h4>Color Coding</h4>
-        <p>Change the card border color based on idea type to improve scanning.</p>
+        <h4>&#127914; Custom Labels</h4>
+        <p>Let users rename the color category labels (Idea, Action, Research) and save those names to localStorage.</p>
       </div>
       <div class="extend-card">
-        <h4>Export JSON</h4>
-        <p>Download the full array as a JSON file so students can see the raw data behind the UI.</p>
+        <h4>&#128279; Share Link</h4>
+        <p>Encode the notes array as a URL parameter so users can share a board state via a link.</p>
       </div>
       <div class="extend-card">
-        <h4>Drag Sort</h4>
-        <p>Allow ideas to be reordered manually and save the new array order back to localStorage.</p>
+        <h4>&#128101; Multi-Board</h4>
+        <p>Add a board selector that lets users maintain multiple named boards in localStorage — like tabs for different projects.</p>
       </div>
+    </div>
+
+    <div class="up-next">
+      <span class="up-next-label">Up Next — Chapter 03</span>
+      <h3>One-Click Invoice Generator</h3>
+      <p>Build a form-driven invoice tool that assembles a formatted PDF from user input — no backend required. You'll learn form validation, template literals, and client-side PDF export.</p>
+      <a href="../../hub.html">Start Chapter 03 &rarr;</a>
     </div>
   </section>
 
