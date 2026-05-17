@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Internationally Tribal</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    svg {
+      width: min(90vw, 90vh);
+      height: min(90vw, 90vh);
+    }
+  </style>
+</head>
+<body>
+
+<svg id="logo" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Outer black circle -->
+  <circle cx="250" cy="250" r="248" fill="black" />
+
+  <!-- White octagon border ring -->
+  <polygon id="octagon" points="155,15 345,15 485,155 485,345 345,485 155,485 15,345 15,155"
+    fill="none" stroke="white" stroke-width="14" />
+
+  <!-- Inner white circle cutout feel -->
+  <circle cx="250" cy="250" r="210" fill="black" />
+
+  <!-- White tilted square background -->
+  <rect id="square" x="105" y="115" width="290" height="275" rx="4"
+    fill="white" transform="rotate(-4, 250, 250)" />
+
+  <!-- RED SHAPE: I vertical blade -->
+  <polygon id="blade-i"
+    points="195,140 225,140 225,380 195,380"
+    fill="red" />
+
+  <!-- RED SHAPE: T crossbar -->
+  <polygon id="crossbar-t"
+    points="170,140 340,140 340,175 170,175"
+    fill="red" />
+
+  <!-- RED SHAPE: T stem (parallel sides) -->
+  <polygon id="stem-t"
+    points="225,175 275,175 275,380 225,380"
+    fill="red" />
+
+  <!-- Pyramid triangle (universal symbol) -->
+  <polygon id="pyramid"
+    points="250,395 220,435 280,435"
+    fill="none" stroke="white" stroke-width="4" />
+  <!-- inner pyramid line -->
+  <line id="pyramid-inner" x1="250" y1="405" x2="250" y2="428" stroke="white" stroke-width="2" />
+  <line id="pyramid-inner2" x1="235" y1="428" x2="265" y2="428" stroke="white" stroke-width="2" />
+
+  <!-- Crossbones -->
+  <g id="crossbones" stroke="white" stroke-width="4" stroke-linecap="round">
+    <line x1="224" y1="450" x2="276" y2="468" />
+    <line x1="276" y1="450" x2="224" y2="468" />
+    <circle cx="220" cy="449" r="5" fill="white" />
+    <circle cx="280" cy="449" r="5" fill="white" />
+    <circle cx="220" cy="469" r="5" fill="white" />
+    <circle cx="280" cy="469" r="5" fill="white" />
+  </g>
+
+  <!-- FACE ELEMENTS (hidden initially) -->
+  <!-- Left eye -->
+  <ellipse id="eye-left" cx="195" cy="210" rx="0" ry="0" fill="red" />
+  <!-- Right eye -->
+  <ellipse id="eye-right" cx="305" cy="210" rx="0" ry="0" fill="red" />
+  <!-- Nose -->
+  <polygon id="nose"
+    points="250,240 250,240 250,240"
+    fill="red" />
+  <!-- Mouth -->
+  <path id="mouth" d="M 210,330 Q 250,330 290,330" fill="none" stroke="red" stroke-width="0" stroke-linecap="round" />
+
+</svg>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<script>
+window.addEventListener('load', () => {
+
+  setTimeout(() => {
+
+    const tl = anime.timeline({ easing: 'easeInOutQuart' });
+
+    // Step 1: Morph I blade into left eye brow
+    tl.add({
+      targets: '#blade-i',
+      points: [
+        { value: '165,170 230,170 230,195 165,195' }
+      ],
+      duration: 800
+    })
+
+    // Step 2: Morph T crossbar into right eyebrow
+    .add({
+      targets: '#crossbar-t',
+      points: [
+        { value: '270,170 340,170 340,195 270,195' }
+      ],
+      duration: 800
+    }, '-=600')
+
+    // Step 3: Morph T stem into nose bridge
+    .add({
+      targets: '#stem-t',
+      points: [
+        { value: '237,200 263,200 258,310 242,310' }
+      ],
+      duration: 900
+    }, '-=400')
+
+    // Step 4: Eyes appear
+    .add({
+      targets: '#eye-left',
+      rx: 28,
+      ry: 22,
+      duration: 600
+    }, '-=300')
+    .add({
+      targets: '#eye-right',
+      rx: 28,
+      ry: 22,
+      duration: 600
+    }, '-=600')
+
+    // Step 5: Nose triangle
+    .add({
+      targets: '#nose',
+      points: [
+        { value: '250,265 232,310 268,310' }
+      ],
+      duration: 500
+    }, '-=200')
+
+    // Step 6: Mouth curve appears
+    .add({
+      targets: '#mouth',
+      strokeWidth: 8,
+      d: [
+        { value: 'M 195,335 Q 250,375 305,335' }
+      ],
+      duration: 700
+    }, '-=200')
+
+    // Step 7: Pyramid grows into chin
+    .add({
+      targets: '#pyramid',
+      points: [
+        { value: '250,370 205,445 295,445' }
+      ],
+      duration: 600
+    }, '-=300')
+
+    // HOLD on face
+    .add({ targets: 'svg', opacity: 1, duration: 1200 })
+
+    // ---- REVERSE SEQUENCE ----
+
+    // Pyramid back
+    .add({
+      targets: '#pyramid',
+      points: [
+        { value: '250,395 220,435 280,435' }
+      ],
+      duration: 600
+    })
+
+    // Mouth disappears
+    .add({
+      targets: '#mouth',
+      strokeWidth: 0,
+      d: [
+        { value: 'M 210,330 Q 250,330 290,330' }
+      ],
+      duration: 500
+    }, '-=300')
+
+    // Eyes shrink
+    .add({
+      targets: '#eye-left',
+      rx: 0, ry: 0,
+      duration: 500
+    }, '-=200')
+    .add({
+      targets: '#eye-right',
+      rx: 0, ry: 0,
+      duration: 500
+    }, '-=500')
+
+    // Nose back
+    .add({
+      targets: '#nose',
+      points: [
+        { value: '250,240 250,240 250,240' }
+      ],
+      duration: 400
+    }, '-=200')
+
+    // T stem back
+    .add({
+      targets: '#stem-t',
+      points: [
+        { value: '225,175 275,175 275,380 225,380' }
+      ],
+      duration: 900
+    }, '-=200')
+
+    // T crossbar back
+    .add({
+      targets: '#crossbar-t',
+      points: [
+        { value: '170,140 340,140 340,175 170,175' }
+      ],
+      duration: 800
+    }, '-=500')
+
+    // I blade back
+    .add({
+      targets: '#blade-i',
+      points: [
+        { value: '195,140 225,140 225,380 195,380' }
+      ],
+      duration: 800
+    }, '-=600');
+
+  }, 2000);
+
+});
+</script>
+
+</body>
+</html>
