@@ -55,16 +55,13 @@
     #fileInput { display: none; }
     .pad-form { display: flex; flex-direction: column; gap: 0.75rem; }
     .key-badge { display: inline-block; background: #1e1e1e; border: 1px solid #333; border-radius: 3px; padding: 0.1rem 0.45rem; font-size: 0.75rem; font-family: monospace; color: #888; }
-    .vol-row { display: flex; align-items: center; justify-content: space-between; }
 
     /* BOARD */
     .board-wrap { padding: 2rem 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; overflow-y: auto; }
     .board-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
     .board-header h2 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--red); }
-    .board-controls { display: flex; gap: 0.5rem; align-items: center; }
     .board-controls button { background: transparent; border: 1px solid #2a2a2a; color: #666; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.3rem 0.75rem; border-radius: 4px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
     .board-controls button:hover { border-color: var(--red); color: var(--red); }
-    .board-controls select { width: auto; font-size: 0.75rem; padding: 0.3rem 0.6rem; }
 
     /* PAD GRID */
     .pad-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem; }
@@ -83,16 +80,13 @@
       user-select: none;
     }
     .pad:hover { border-color: #444; }
-    .pad.playing {
-      transform: scale(0.95);
-      border-color: var(--red);
-      background: #1f0000;
-    }
-    .pad.empty { opacity: 0.35; border-style: dashed; cursor: default; }
+    .pad.playing { transform: scale(0.95); border-color: var(--red); background: #1f0000; }
+    .pad.no-audio { opacity: 0.4; cursor: default; }
     .pad-color-bar { position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: 6px 6px 0 0; }
     .pad-label { font-size: 0.85rem; font-weight: bold; color: var(--white); line-height: 1.3; word-break: break-word; margin-top: 0.25rem; }
     .pad-key { font-size: 0.65rem; font-family: monospace; color: #555; }
     .pad-duration { font-size: 0.65rem; color: #444; }
+    .pad-hint { font-size: 0.65rem; color: #333; font-style: italic; }
     .pad-edit-btn {
       position: absolute; bottom: 0.5rem; right: 0.5rem;
       background: none; border: none; color: #333; font-size: 0.75rem;
@@ -106,7 +100,7 @@
     .empty-board .icon { font-size: 3rem; display: block; margin-bottom: 1rem; }
     .empty-board p { font-size: 0.9rem; line-height: 1.6; }
 
-    /* MASTER VOLUME */
+    /* MASTER BAR */
     .master-bar { background: #0d0d0d; border-top: 1px solid var(--border); padding: 0.75rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
     .master-bar label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: #444; white-space: nowrap; margin: 0; }
     .master-bar input[type=range] { flex: 1; max-width: 200px; }
@@ -275,14 +269,14 @@
 <footer>AI Creative Lab — Chapter 07 — Internationally Tribal</footer>
 
 <script>
-// ── STATE ────────────────────────────────────────────────────────────────────
-let pads = [];          // { id, label, key, color, audioData, duration }
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let pads = [];
 let audioCtx = null;
 let masterGain = null;
-let activeSources = {}; // id -> { source, gainNode, startTime, duration }
+let activeSources = {};
 let editingId = null;
-let pendingAudioData = null;  // base64 for new pad
-let editPendingAudio = null;  // base64 for edit
+let pendingAudioData = null;
+let editPendingAudio = null;
 let masterVolume = 0.8;
 const SAVE_KEY = 'it_ch07_board';
 
@@ -297,7 +291,7 @@ function getAudioCtx() {
   return audioCtx;
 }
 
-// ── FILE LOADING ───────────────────────────────────────────────────────────
+// ── FILE LOADING ──────────────────────────────────────────────────────────────
 function readFileAsBase64(file) {
   return new Promise((res, rej) => {
     const reader = new FileReader();
@@ -313,6 +307,15 @@ function getAudioDuration(base64) {
     audio.addEventListener('loadedmetadata', () => res(audio.duration));
     audio.addEventListener('error', () => res(0));
   });
+}
+
+// Convert a base64 data URI to an ArrayBuffer without fetch()
+function base64ToArrayBuffer(dataURI) {
+  const base64 = dataURI.split(',')[1];
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
 }
 
 document.getElementById('fileInput').addEventListener('change', async e => {
@@ -332,7 +335,7 @@ document.getElementById('editFileInput').addEventListener('change', async e => {
   document.getElementById('editFileStatus').textContent = file.name;
 });
 
-// ── KEY CAPTURE ─────────────────────────────────────────────────────────────
+// ── KEY CAPTURE ───────────────────────────────────────────────────────────────
 function makeKeyCaptureInput(inputId) {
   const el = document.getElementById(inputId);
   el.addEventListener('keydown', e => {
@@ -345,7 +348,7 @@ function makeKeyCaptureInput(inputId) {
 makeKeyCaptureInput('padKey');
 makeKeyCaptureInput('editKey');
 
-// ── ADD PAD ────────────────────────────────────────────────────────────────────
+// ── ADD PAD ───────────────────────────────────────────────────────────────────
 async function addPad() {
   const label = document.getElementById('padLabel').value.trim();
   if (!label) { toast('Enter a pad label'); return; }
@@ -368,16 +371,18 @@ async function addPad() {
 // ── PLAY ──────────────────────────────────────────────────────────────────────
 async function playPad(id) {
   const pad = pads.find(p => p.id === id);
-  if (!pad) return;
+  if (!pad || !pad.audioData) {
+    toast('No audio loaded — edit this pad to add a file');
+    return;
+  }
   const ctx = getAudioCtx();
-  // stop existing instance of this pad if playing
   if (activeSources[id]) {
     try { activeSources[id].source.stop(); } catch(e) {}
     delete activeSources[id];
   }
   try {
-    const response = await fetch(pad.audioData);
-    const arrayBuf = await response.arrayBuffer();
+    // Decode base64 → ArrayBuffer directly (no fetch/network call)
+    const arrayBuf = base64ToArrayBuffer(pad.audioData);
     const audioBuf = await ctx.decodeAudioData(arrayBuf);
     const source = ctx.createBufferSource();
     source.buffer = audioBuf;
@@ -386,9 +391,8 @@ async function playPad(id) {
     source.connect(gain);
     gain.connect(masterGain);
     source.start(0);
-    activeSources[id] = { source, gainNode: gain, startTime: ctx.currentTime, duration: audioBuf.duration };
+    activeSources[id] = { source, gainNode: gain };
     updatePlayingIndicator();
-    // visual feedback
     const el = document.getElementById('pad-' + id);
     if (el) {
       el.classList.add('playing');
@@ -457,11 +461,12 @@ function renderPads() {
   }
   empty.style.display = 'none';
   grid.innerHTML = pads.map(p => `
-    <div class="pad" id="pad-${p.id}" onclick="playPad('${p.id}')">
+    <div class="pad${p.audioData ? '' : ' no-audio'}" id="pad-${p.id}" onclick="playPad('${p.id}')">
       <div class="pad-color-bar" style="background:${p.color}"></div>
       <div class="pad-label">${escHtml(p.label)}</div>
       ${p.key ? `<div class="pad-key"><span class="key-badge">${p.key}</span></div>` : ''}
       ${p.duration ? `<div class="pad-duration">${p.duration}s</div>` : ''}
+      ${!p.audioData ? `<div class="pad-hint">no audio</div>` : ''}
       <div class="pad-progress"></div>
       <button class="pad-edit-btn" onclick="event.stopPropagation();openEdit('${p.id}')" title="Edit pad">&#9998;</button>
     </div>`).join('');
@@ -470,11 +475,9 @@ function renderPads() {
 function applyGridCols() {
   const val = document.getElementById('gridCols').value;
   const grid = document.getElementById('padGrid');
-  if (val === 'auto') {
-    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(140px, 1fr))';
-  } else {
-    grid.style.gridTemplateColumns = `repeat(${val}, 1fr)`;
-  }
+  grid.style.gridTemplateColumns = val === 'auto'
+    ? 'repeat(auto-fill, minmax(140px, 1fr))'
+    : `repeat(${val}, 1fr)`;
   savePads();
 }
 
@@ -482,7 +485,7 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── EDIT MODAL ─────────────────────────────────────────────────────────────
+// ── EDIT MODAL ────────────────────────────────────────────────────────────────
 function openEdit(id) {
   const pad = pads.find(p => p.id === id);
   if (!pad) return;
@@ -491,7 +494,7 @@ function openEdit(id) {
   document.getElementById('editLabel').value = pad.label;
   document.getElementById('editKey').value = pad.key || '';
   document.getElementById('editColor').value = pad.color;
-  document.getElementById('editFileStatus').textContent = 'Keep existing audio';
+  document.getElementById('editFileStatus').textContent = pad.audioData ? 'Keep existing audio' : 'No audio yet';
   document.getElementById('editFileInput').value = '';
   document.getElementById('editModal').classList.add('open');
 }
@@ -541,7 +544,7 @@ document.getElementById('editModal').addEventListener('click', e => {
   if (e.target === document.getElementById('editModal')) closeModal();
 });
 
-// ── PERSIST (metadata only — audio stored as base64 in the pad objects) ─────────────
+// ── PERSIST ───────────────────────────────────────────────────────────────────
 function savePads() {
   const data = {
     boardName: document.getElementById('boardName').value,
@@ -563,23 +566,20 @@ function loadPads() {
       masterVolume = d.masterVolume ?? 0.8;
       document.getElementById('masterVol').value = masterVolume;
       document.getElementById('masterVolVal').textContent = Math.round(masterVolume * 100) + '%';
-      if (d.gridCols) {
-        document.getElementById('gridCols').value = d.gridCols;
-        applyGridCols();
-      }
+      if (d.gridCols) { document.getElementById('gridCols').value = d.gridCols; applyGridCols(); }
       pads = d.pads || [];
       renderPads();
       return;
     } catch(e) {}
   }
-  // Default demo pads (no audio — visual only)
+  // Default demo pads — visual placeholders, no audio
   pads = [
     { id: 'd1', label: 'Intro Music', key: 'Q', color: '#e00000', audioData: null, duration: null },
-    { id: 'd2', label: 'Applause', key: 'W', color: '#e07000', audioData: null, duration: null },
-    { id: 'd3', label: 'Air Horn', key: 'E', color: '#e0c000', audioData: null, duration: null },
-    { id: 'd4', label: 'Drum Roll', key: 'R', color: '#00a060', audioData: null, duration: null },
-    { id: 'd5', label: 'Sting', key: 'T', color: '#0060c0', audioData: null, duration: null },
-    { id: 'd6', label: 'Transition', key: 'Y', color: '#8000c0', audioData: null, duration: null },
+    { id: 'd2', label: 'Applause',    key: 'W', color: '#e07000', audioData: null, duration: null },
+    { id: 'd3', label: 'Air Horn',    key: 'E', color: '#e0c000', audioData: null, duration: null },
+    { id: 'd4', label: 'Drum Roll',   key: 'R', color: '#00a060', audioData: null, duration: null },
+    { id: 'd5', label: 'Sting',       key: 'T', color: '#0060c0', audioData: null, duration: null },
+    { id: 'd6', label: 'Transition',  key: 'Y', color: '#8000c0', audioData: null, duration: null },
   ];
   renderPads();
 }
@@ -636,17 +636,15 @@ function clearBoard() {
   toast('Board cleared');
 }
 
-// ── KEYBOARD GLOBAL ────────────────────────────────────────────────────────────
+// ── KEYBOARD ──────────────────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
-  // Don't fire when typing in an input
   if (['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
   if (e.key === ' ') { e.preventDefault(); stopAll(); return; }
-  const key = e.key.toUpperCase();
-  const pad = pads.find(p => p.key === key);
+  const pad = pads.find(p => p.key === e.key.toUpperCase());
   if (pad && pad.audioData) playPad(pad.id);
 });
 
-// ── TOAST ──────────────────────────────────────────────────────────────────────
+// ── TOAST ─────────────────────────────────────────────────────────────────────
 function toast(msg, dur = 2200) {
   const t = document.getElementById('toast');
   t.textContent = msg;
