@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 06 Activity — Brand Palette Generator</title>
+  <style>
+    :root { --black: #111; --red: #e00; --white: #f5f5f5; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--black); color: var(--white); line-height: 1.7; }
+    header { background: var(--black); border-bottom: 4px solid var(--red); padding: 3rem 2rem 2rem; text-align: center; }
+    header .chapter-tag { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--red); margin-bottom: .75rem; }
+    header h1 { font-size: clamp(1.8rem,5vw,3rem); letter-spacing: .04em; text-transform: uppercase; }
+    header h1 span { color: var(--red); }
+    header p { margin-top: .75rem; font-size: 1.05rem; color: #888; max-width: 600px; margin-inline: auto; }
+    .header-links { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+    .header-links a { color: var(--red); font-size: .8rem; text-transform: uppercase; letter-spacing: .07em; text-decoration: none; border: 1px solid var(--red); padding: .4rem 1rem; border-radius: 3px; transition: background .2s, color .2s; }
+    .header-links a:hover { background: var(--red); color: white; }
+    main { max-width: 860px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    section { margin-bottom: 3.5rem; }
+    h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: .08em; color: var(--red); border-left: 5px solid var(--red); padding-left: .75rem; margin-bottom: 1rem; }
+    h3 { font-size: 1.05rem; color: #ccc; margin: 1.5rem 0 .5rem; }
+    p { margin-bottom: 1rem; color: #bbb; }
+    ul, ol { padding-left: 1.5rem; color: #999; margin-bottom: 1rem; }
+    li { margin-bottom: .5rem; }
+    a { color: var(--red); }
+    .callout { background: #1a1a1a; border-left: 4px solid var(--red); padding: 1.25rem 1.5rem; border-radius: 4px; margin: 1.5rem 0; }
+    .callout p { margin: 0; }
+    .callout strong { color: var(--white); }
+    .step { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.5rem; margin-bottom: 1.25rem; }
+    .step-num { display: inline-block; background: var(--red); color: white; font-weight: bold; font-size: .8rem; padding: .2rem .6rem; border-radius: 3px; margin-bottom: .6rem; letter-spacing: .05em; text-transform: uppercase; }
+    .step h3 { margin-top: 0; color: white; }
+    code { background: #222; color: #f88; padding: .15em .4em; border-radius: 3px; font-size: .9em; }
+    pre { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.25rem; overflow-x: auto; margin: 1rem 0; }
+    pre code { background: none; color: #f88; padding: 0; font-size: .88rem; line-height: 1.6; }
+    .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+    @media (max-width:540px) { .concept-grid { grid-template-columns: 1fr; } }
+    .concept-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.25rem; }
+    .concept-card h4 { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--red); margin-bottom: .5rem; }
+    .concept-card p { color: #888; font-size: .88rem; margin: 0; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+    .tag { background: #1e1e1e; border: 1px solid #333; color: #777; font-size: .75rem; padding: .25rem .65rem; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; }
+    .big-quote { font-size: clamp(1.1rem,3vw,1.6rem); font-style: italic; color: var(--white); text-align: center; padding: 2rem 1rem; border-top: 1px solid #222; border-bottom: 1px solid #222; margin: 2rem 0; line-height: 1.5; }
+    .big-quote span { color: var(--red); }
+    .reflection { background: #111; border: 2px dashed #333; border-radius: 6px; padding: 1.5rem; margin-top: 1rem; }
+    .reflection p { color: #666; font-style: italic; }
+    .reflection ol { color: #666; }
+    .extend-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 1rem; margin-top: 1rem; }
+    .extend-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.25rem; }
+    .extend-card h4 { color: white; font-size: .95rem; margin-bottom: .4rem; }
+    .extend-card p { font-size: .85rem; color: #666; margin: 0; }
+    .up-next { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 2rem; margin-top: 3rem; display: flex; flex-direction: column; align-items: flex-start; gap: .75rem; }
+    .up-next-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--red); }
+    .up-next h3 { color: white; font-size: 1.2rem; margin: 0; }
+    .up-next p { color: #777; font-size: .88rem; margin: 0; }
+    .up-next a { display: inline-block; background: transparent; border: 1px solid var(--red); color: var(--red); font-size: .82rem; text-transform: uppercase; letter-spacing: .07em; text-decoration: none; padding: .5rem 1.25rem; border-radius: 4px; margin-top: .25rem; transition: background .2s, color .2s; }
+    .up-next a:hover { background: var(--red); color: white; }
+    footer { text-align: center; padding: 2rem; color: #444; font-size: .8rem; border-top: 1px solid #1e1e1e; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="chapter-tag">Chapter 06 — Activity Guide</div>
+  <h1>Build a <span>Brand Palette Generator</span></h1>
+  <p>Learn color theory math, HSL manipulation, and dynamic code generation — while building a real tool for designing brand color systems without any library.</p>
+  <div class="header-links">
+    <a href="index.html">&#9654; Open the Generator</a>
+    <a href="../../hub.html">&larr; All Chapters</a>
+    <a href="../05/activity.html">Chapter 05</a>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <h2>Why This Project?</h2>
+    <p>Color is math. Every design tool you've ever used — Figma, Coolors, Adobe Color — computes its palettes using the same trigonometry on the HSL color wheel. This chapter strips away the library and builds that math directly in vanilla JavaScript.</p>
+    <p>You'll learn to convert between hex and HSL, derive harmonic colors by rotating the hue angle, generate tint/shade scales via lightness interpolation, and export the result as CSS custom properties, SCSS variables, JSON, or a Tailwind config — all from the same underlying data array.</p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>HSL Color Model</h4>
+        <p><strong>H</strong>ue (0–360°) is the color wheel position. <strong>S</strong>aturation (0–100%) is intensity. <strong>L</strong>ightness (0–100%) is brightness. Tints increase L; shades decrease L. Harmonics rotate H.</p>
+      </div>
+      <div class="concept-card">
+        <h4>Hex ↔ HSL Conversion</h4>
+        <p>Convert hex → RGB (divide by 255) → normalize to find min/max channel → compute H, S, L. Reverse: use the cubic formula from the CSS spec. No library needed — it's 15 lines.</p>
+      </div>
+      <div class="concept-card">
+        <h4>Color Harmonics</h4>
+        <p>Complementary = H + 180°. Triadic = H, H+120°, H+240°. Analogous = H±30°. Split-complementary = H+150°, H+210°. All are just modular arithmetic on the hue circle.</p>
+      </div>
+      <div class="concept-card">
+        <h4>Dynamic Code Generation</h4>
+        <p>The same palette object emits CSS, SCSS, JSON, or Tailwind config — just different string templates over the same key/value pairs. This is the factory pattern: one data model, many output formats.</p>
+      </div>
+    </div>
+
+    <div class="tag-row">
+      <span class="tag">HSL Color Math</span>
+      <span class="tag">Hex Conversion</span>
+      <span class="tag">Color Harmonics</span>
+      <span class="tag">CSS Custom Properties</span>
+      <span class="tag">Blob Download API</span>
+      <span class="tag">SVG Generation</span>
+      <span class="tag">Live Reactivity</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>The AI Angle for This Chapter</h2>
+    <p>Color math is a precision task. The hex-to-HSL conversion must be exact — a small rounding error compounds through every derived color. This is a case where asking AI to "write a color converter" will give you working code, but you need to understand the algorithm well enough to verify it against known values.</p>
+
+    <div class="callout">
+      <p><strong>Verify with known values before trusting generated math.</strong> Prompt: "Convert #e00000 to HSL. Show the calculation step by step." The answer should be hsl(0°, 100%, 44%). If AI gives you something different, its formula is wrong. Give it the expected output and ask it to fix the derivation — don't just accept the first result on color math.</p>
+    </div>
+
+    <div class="big-quote">
+      &ldquo;A color isn't a number.
+      <span>It's a position on a wheel.</span>&rdquo;
+    </div>
+
+    <p>The most powerful prompt technique for this chapter is describing the output format first. Write the exact CSS variables you want to see, then ask AI to write the function that generates them. The spec becomes your test case.</p>
+  </section>
+
+  <section>
+    <h2>Before You Build — Think in HSL</h2>
+    <p>Before writing any code, sketch the palette on paper using HSL values:</p>
+    <div class="reflection">
+      <ol>
+        <li>Take any brand hex — say <code>#e00000</code> (Internationally Tribal red). What is its H, S, L? Compute by hand or use browser DevTools color picker.</li>
+        <li>What hex color is the complement? It's H+180°. If H=0, complement H=180 (cyan). Does that feel right visually?</li>
+        <li>How would you generate 5 tints? You want to move L from the base value toward 95% in equal steps. Write the formula: <code>L_tint_n = base_L + (95 - base_L) * (n / steps)</code>.</li>
+        <li>If you want shades (darker), you move L toward 8%. Write that formula too. Notice it's the same structure with a different target.</li>
+        <li>For neutral colors, you keep the same H but drop S to ~8% and vary L from dark to light. Why keep H at all instead of using pure gray (S=0)?</li>
+      </ol>
+      <p style="margin-top:1rem;">The math is simple linear interpolation and modular arithmetic. Everything else in this chapter is presentation around those two operations.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Build It</h2>
+
+    <div class="step">
+      <span class="step-num">Phase 1</span>
+      <h3>Build the hex ↔ HSL conversion utilities</h3>
+      <p>These are the foundation. Every other function depends on them. Build <code>hexToHsl(hex)</code> and <code>hslToHex(h,s,l)</code> and test them manually before moving on.</p>
+      <pre><code>Build hexToHsl(hex) that:
+1. Parses the 6-digit hex into r, g, b (0–255 each)
+2. Normalizes to 0–1 range
+3. Finds max and min channel values
+4. Computes L = (max+min)/2
+5. Computes S = d / (1 - |2L-1|) where d = max-min
+6. Computes H based on which channel is max
+7. Returns [H (0-360), S (0-100), L (0-100)] as integers
+
+Test: hexToHsl('#e00000') → [0, 100, 44]
+Test: hexToHsl('#ffffff') → [0, 0, 100]
+Test: hexToHsl('#0057b7') → [213, 100, 36]</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 2</span>
+      <h3>Build scale and harmony generators</h3>
+      <p>With conversion working, write <code>getScale(hex, steps, satShift)</code> that returns an array of color objects with hex and role, and <code>getHarmony(hex, mode)</code> that returns harmonic colors based on hue rotation.</p>
+      <pre><code>getScale(hex, steps, satShift):
+- Tints: for i from (steps-1) down to 1:
+    L_tint = base_L + (95 - base_L) * (i / steps)
+    Push { hex: hslToHex(H, S, L_tint), role: 'tint-i' }
+- Push base color: { hex, role: 'base' }
+- Shades: for i from 1 to steps-1:
+    L_shade = base_L - (base_L - 8) * (i / steps)
+    Push { hex: hslToHex(H, S, L_shade), role: 'shade-i' }
+- satShift adjusts S on derived colors (clamp 0-100)
+
+getHarmony(hex, mode): use a lookup object keyed by mode name.
+Each value is an array of { hex: hslToHex(H+offset, S, L), role }.
+Complementary offset: 180. Triadic: 0, 120, 240. Analogous: -30, 0, 30.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 3</span>
+      <h3>Build the swatch renderer</h3>
+      <p>Render each color as a clickable swatch that shows hex + role. Clicking any swatch copies its hex to the clipboard using <code>navigator.clipboard.writeText()</code> and shows a brief "Copied!" overlay.</p>
+      <pre><code>makeSwatch(color, showName, darkLabel):
+1. Determine label text color: if L > 55 use dark (#111), else white
+2. Create a div with background: color.hex
+3. Inner label: hex value (bold) + role name (small)
+4. On click: navigator.clipboard.writeText(color.hex),
+   add class 'copied' for 1s (CSS ::after overlay: "Copied!")
+
+For harmony colors use a card layout:
+- Top half: color fill
+- Bottom: role label, hex, hsl() string, optional name</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 4</span>
+      <h3>Build multi-format code output</h3>
+      <p>All colors from all three rows (scale, harmony, neutrals) should map to named variables. One <code>buildCode(scale, harmony, neutrals, format, name)</code> function handles CSS, SCSS, JSON, and Tailwind.</p>
+      <pre><code>Build a flat array of [variableName, hexValue] pairs.
+For CSS:
+  ':root {\n' + pairs.map(([k,v]) => `  --${k}: ${v};`).join('\n') + '\n}'
+For SCSS:
+  pairs.map(([k,v]) => `$${k}: ${v};`).join('\n')
+For JSON:
+  JSON.stringify(Object.fromEntries(pairs), null, 2)
+For Tailwind:
+  Group pairs by prefix, nest under theme.extend.colors,
+  output as module.exports JS string</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 5</span>
+      <h3>Build SVG swatch sheet export</h3>
+      <p>Generate a downloadable SVG showing all swatches as a labeled grid. Use the same Blob + Object URL download pattern from Chapter 05 — this time with <code>type: 'image/svg+xml'</code>.</p>
+      <pre><code>downloadSVG():
+1. Combine all colors into one flat array
+2. Calculate grid dimensions: cols = min(length, 10), rows = ceil(length/cols)
+3. For each color, emit:
+   &lt;rect x y width height rx fill={hex}/&gt;
+   &lt;text&gt;hex value&lt;/text&gt;
+   &lt;text&gt;role name&lt;/text&gt;
+4. Add palette title text at top
+5. Wrap in &lt;svg&gt; with dark background fill
+6. Blob with type 'image/svg+xml', download as 'brand-swatches.svg'</code></pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>Concepts You Just Used</h2>
+    <ul>
+      <li><strong>HSL color model</strong> — expressing colors as position on a wheel (H), intensity (S), and brightness (L) makes palette math intuitive and predictable</li>
+      <li><strong>Linear interpolation</strong> — <code>start + (end - start) * t</code> where t is 0–1; used for every tint and shade step</li>
+      <li><strong>Modular arithmetic</strong> — <code>(H + 180) % 360</code> wraps the hue angle around the 360° wheel</li>
+      <li><strong>CSS custom properties</strong> — <code>--variable-name: value</code> declared in <code>:root</code> are the modern standard for design tokens</li>
+      <li><strong>Data → format factory</strong> — one array of <code>[key, value]</code> pairs, multiple output string templates; the data is format-agnostic</li>
+      <li><strong>SVG generation</strong> — SVG is just XML; any string of well-formed SVG tags is a valid, downloadable vector file</li>
+      <li><strong>navigator.clipboard.writeText()</strong> — async copy to clipboard; always handle the <code>.catch()</code> for permission denied</li>
+      <li><strong>Live reactivity</strong> — attaching <code>input</code> and <code>change</code> listeners to all controls and calling one regenerate function creates instant feedback</li>
+    </ul>
+
+    <div class="callout">
+      <p><strong>CSS custom properties are design tokens.</strong> The palette you export in this chapter is the same artifact that feeds Figma token plugins, Storybook theming, and component libraries. You just built the primitive layer of a full design system — without Figma, without Style Dictionary, without npm.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Reflect</h2>
+    <div class="reflection">
+      <ol>
+        <li>Why is HSL more useful than RGB for generating palettes? What would tint generation look like if you had to do it in RGB instead?</li>
+        <li>The complementary of red (H=0°) is cyan (H=180°). Why does that combination feel so intense? What would you do to make it feel more harmonious in a real brand?</li>
+        <li>This tool generates colors mathematically. A human designer would adjust them by feel. What's one thing a human would do that this tool can't — and how would you add a control for it?</li>
+        <li>The neutral scale keeps the base hue at low saturation. How does that compare to using pure gray (<code>s=0</code>)? Which approach is better for brand consistency?</li>
+        <li>The SVG export is a flat grid. How would you change the layout to a horizontal strip (one row per color group) with larger swatches?</li>
+      </ol>
+      <p style="margin-top:1rem;">You didn't install a color library. You wrote the math that <em>is</em> the color library. That's the difference between using tools and understanding them.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Go Further</h2>
+    <div class="extend-grid">
+      <div class="extend-card">
+        <h4>&#127912; Contrast Checker</h4>
+        <p>Add WCAG contrast ratio calculation between any two selected swatches. Show pass/fail for AA (4.5:1) and AAA (7:1) standards. The formula uses relative luminance from the W3C spec.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128444; Image Color Extraction</h4>
+        <p>Use a <code>&lt;canvas&gt;</code> element to sample pixels from a dropped image. Average the top 5 most prominent hues and use one as the base color input automatically.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#127760; Palette History</h4>
+        <p>Save up to 10 recent palettes in localStorage keyed by base hex + mode. Add a dropdown to reload any saved palette. Include a "pin" option to keep favorites.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128199; Figma Token Export</h4>
+        <p>Figma Tokens plugin uses a specific JSON structure. Build a fifth export format that generates a <code>tokens.json</code> compatible with the plugin's import schema.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128064; Color Blindness Preview</h4>
+        <p>Simulate deuteranopia and protanopia by applying the known color matrix transform to your palette swatches in a side-by-side preview panel.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#127808; Gradient Builder</h4>
+        <p>Take any two swatches from your palette and generate a CSS <code>linear-gradient</code> between them with 5 intermediate stops. Preview it as a full-width banner and copy the CSS.</p>
+      </div>
+    </div>
+
+    <div class="up-next">
+      <span class="up-next-label">Up Next — Chapter 07</span>
+      <h3>Markdown Live Editor</h3>
+      <p>Build a split-pane Markdown editor with live preview, custom toolbar, and export to HTML or PDF. You'll learn DOM parsing, regex-based text transforms, and print-to-PDF from the browser.</p>
+      <a href="../../hub.html">Start Chapter 07 &rarr;</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>AI Creative Lab — Chapter 06 Activity — Internationally Tribal</footer>
+
+</body>
+</html>
