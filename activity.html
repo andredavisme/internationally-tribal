@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI as a Creative Tool — Student Activity</title>
+  <style>
+    :root {
+      --black: #111;
+      --red: #e00;
+      --white: #f9f9f9;
+      --gray: #333;
+      --light: #eee;
+      --accent: #e00;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--black);
+      color: var(--white);
+      line-height: 1.7;
+    }
+    header {
+      background: var(--black);
+      border-bottom: 4px solid var(--red);
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+    }
+    header h1 {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    header h1 span { color: var(--red); }
+    header p {
+      margin-top: 0.75rem;
+      font-size: 1.1rem;
+      color: #aaa;
+      max-width: 640px;
+      margin-inline: auto;
+    }
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+    }
+    section { margin-bottom: 3.5rem; }
+    h2 {
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--red);
+      border-left: 5px solid var(--red);
+      padding-left: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    h3 {
+      font-size: 1.1rem;
+      color: #ccc;
+      margin: 1.5rem 0 0.5rem;
+    }
+    p { margin-bottom: 1rem; color: #ccc; }
+    ul, ol {
+      padding-left: 1.5rem;
+      color: #bbb;
+      margin-bottom: 1rem;
+    }
+    li { margin-bottom: 0.5rem; }
+    .callout {
+      background: #1a1a1a;
+      border-left: 4px solid var(--red);
+      padding: 1.25rem 1.5rem;
+      border-radius: 4px;
+      margin: 1.5rem 0;
+    }
+    .callout strong { color: var(--white); }
+    .callout p { margin: 0; }
+    .step {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+    .step-num {
+      display: inline-block;
+      background: var(--red);
+      color: white;
+      font-weight: bold;
+      font-size: 0.85rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+      margin-bottom: 0.6rem;
+      letter-spacing: 0.05em;
+    }
+    .step h3 { margin-top: 0; color: white; }
+    code {
+      background: #222;
+      color: #f88;
+      padding: 0.15em 0.4em;
+      border-radius: 3px;
+      font-size: 0.92em;
+    }
+    pre {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    pre code {
+      background: none;
+      color: #f88;
+      padding: 0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+    .tag {
+      background: #222;
+      border: 1px solid #444;
+      color: #aaa;
+      font-size: 0.8rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .reflection {
+      background: #111;
+      border: 2px dashed #444;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+    .reflection p { color: #888; font-style: italic; }
+    .reflection ol { color: #888; }
+    .big-quote {
+      font-size: clamp(1.2rem, 3vw, 1.7rem);
+      font-style: italic;
+      color: var(--white);
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid #333;
+      border-bottom: 1px solid #333;
+      margin: 2rem 0;
+      line-height: 1.5;
+    }
+    .big-quote span { color: var(--red); }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #555;
+      font-size: 0.85rem;
+      border-top: 1px solid #222;
+    }
+    a { color: var(--red); }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>AI is a <span>Tool</span>, Not the Artist</h1>
+  <p>A hands-on student activity exploring creative collaboration with AI — on your terms.</p>
+</header>
+
+<main>
+
+  <!-- SECTION 0: THE FEAR -->
+  <section>
+    <h2>Let's Talk About the Fear</h2>
+    <p>When most people first hear about AI, the conversation often goes one of two ways:</p>
+    <ul>
+      <li>"AI is going to replace artists, writers, and designers."</li>
+      <li>"Just ask AI to do it for you."</li>
+    </ul>
+    <p>Both of these frames have something in common — they remove <em>you</em> from the equation. And that's where the fear comes from. It's a fair fear. But it's based on a specific, narrow way of using the tool.</p>
+
+    <div class="big-quote">
+      &ldquo;A hammer doesn't build a house.<br />
+      <span>A person with a hammer does.</span>&rdquo;
+    </div>
+
+    <p>AI is a hammer. A very fast, very capable hammer. But it has no taste, no lived experience, no vision. It only responds to yours. The question isn't "will AI replace me?" — it's <strong>"how do I use this thing to do more of what I actually want to do?"</strong></p>
+
+    <div class="callout">
+      <p><strong>The "wrong" way to use AI</strong> — for most people — is outsourcing your thinking entirely. Paste in a task, accept the output, call it done. That's when AI flattens creativity. And yes, it can feel threatening when used that way.</p>
+    </div>
+    <div class="callout">
+      <p><strong>The "right" way</strong> is a conversation. You bring the concept, the taste, the judgment. AI brings speed, options, and technical execution. You stay in charge of the direction.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 1: WHAT WE'RE BUILDING -->
+  <section>
+    <h2>What You're Building Today</h2>
+    <p>You're going to build a live web animation — a logo that morphs into a face and back — hosted for free on GitHub Pages. It will look like this:</p>
+    <ul>
+      <li>A bold geometric logo (black, white, and red)</li>
+      <li>2 seconds after the page loads, the logo animates into a face</li>
+      <li>The face holds, then reverses back to the logo</li>
+      <li>No buttons, no UI — just pure visual storytelling</li>
+    </ul>
+    <p>Along the way, you'll use AI as a collaborator. You'll give it direction. You'll push back when it gets something wrong. You'll make the creative calls. The AI handles the code syntax. You handle the vision.</p>
+
+    <div class="tag-row">
+      <span class="tag">HTML</span>
+      <span class="tag">SVG</span>
+      <span class="tag">JavaScript</span>
+      <span class="tag">Anime.js</span>
+      <span class="tag">GitHub Pages</span>
+      <span class="tag">AI Prompting</span>
+    </div>
+  </section>
+
+  <!-- SECTION 2: HUMAN FIRST -->
+  <section>
+    <h2>Human First — Always</h2>
+    <p>Before you write a single line of code or type a single prompt, you need to do the most important thing: <strong>have an idea.</strong></p>
+    <p>AI cannot give you this. It can give you variations of things that already exist, mashed together in new ways. Your original idea — your brand, your aesthetic, your intention — that's the raw material AI needs to be useful.</p>
+
+    <h3>Your turn — answer these before you start:</h3>
+    <div class="reflection">
+      <ol>
+        <li>What's the name or concept of your brand / project?</li>
+        <li>What 3 words describe the feeling or vibe you want?</li>
+        <li>What colors are you working with?</li>
+        <li>What letters, shapes, or symbols feel right to you?</li>
+        <li>What would it mean for your logo to "come alive"? What would it become?</li>
+      </ol>
+      <p style="margin-top:1rem;">Write these down. These are your creative brief. Everything you say to AI should serve this brief.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 3: TOOLS SETUP -->
+  <section>
+    <h2>Set Up Your Tools</h2>
+
+    <div class="step">
+      <span class="step-num">STEP 1</span>
+      <h3>Create a GitHub account</h3>
+      <p>Go to <a href="https://github.com" target="_blank">github.com</a> and sign up for a free account. GitHub is where your project will live and be published to the web.</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">STEP 2</span>
+      <h3>Create a new repository</h3>
+      <p>Click the <strong>+</strong> icon → <strong>New repository</strong>. Give it a name (e.g. <code>my-logo-animation</code>). Set it to <strong>Public</strong> and check <strong>Add a README file</strong>. Click <strong>Create repository</strong>.</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">STEP 3</span>
+      <h3>Enable GitHub Pages</h3>
+      <p>In your repo, go to <strong>Settings → Pages</strong>. Under Source, select <strong>main</strong> branch and <strong>/ (root)</strong>. Click Save. Your site will be live at <code>https://yourusername.github.io/your-repo-name/</code></p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">STEP 4</span>
+      <h3>Pick your AI tool</h3>
+      <p>Use any AI assistant you have access to — <a href="https://www.perplexity.ai" target="_blank">Perplexity</a>, ChatGPT, Claude, Gemini, etc. You'll be having a back-and-forth conversation with it, not just asking it one question.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 4: THE BUILD -->
+  <section>
+    <h2>Build It — With AI as Your Co-Pilot</h2>
+    <p>Here's the key principle: <strong>you direct, AI codes.</strong> You're the creative director. AI is the fast developer who can implement your instructions without needing lunch breaks.</p>
+
+    <div class="step">
+      <span class="step-num">PHASE 1</span>
+      <h3>Design your logo in SVG</h3>
+      <p>Start a conversation with your AI tool. Open with your creative brief. Something like:</p>
+      <pre><code>I want to build an SVG logo for a brand called [YOUR NAME].
+The vibe is [YOUR 3 WORDS]. The colors are [YOUR COLORS].
+The logo should feature the letters [X] and [Y] as bold geometric shapes.
+No gradients. Flat vector only. Give me an HTML file with an inline SVG
+that I can open in a browser.</code></pre>
+      <p>When it responds, open the file in your browser. <strong>You will probably not love it.</strong> That's fine — this is where your job starts.</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">PHASE 2</span>
+      <h3>Iterate like a director</h3>
+      <p>Look at what AI gave you and make specific observations. Avoid vague feedback like "make it better." Instead, be precise:</p>
+      <ul>
+        <li>"The letter I needs to be further left and have pointed tips top and bottom"</li>
+        <li>"The crossbar of the T should have arrowhead ends"</li>
+        <li>"The whole logo needs more breathing room — scale everything down 10%"</li>
+      </ul>
+      <p>Each round, AI refines. You review. You redirect. This back-and-forth is the skill you're building — it's the same skill used in professional design, film direction, and product management.</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">PHASE 3</span>
+      <h3>Add the animation</h3>
+      <p>Once you're happy with the logo, ask AI to add a morph animation using Anime.js. Give it a specific transformation target — what should the logo become?</p>
+      <pre><code>Now I want to add an animation. 2 seconds after the page loads,
+the logo shapes should morph into a face using Anime.js SVG path morphing.
+The [I shape] becomes the left eyebrow. The [T stem] becomes the nose.
+The [crossbar] becomes the right eyebrow. Eyes, nose, and mouth should
+appear from the existing shapes. Hold for 1.5 seconds then reverse.
+No user interface. Use anime.timeline().</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">PHASE 4</span>
+      <h3>Tune the face</h3>
+      <p>The face coordinates will likely need adjustment. This is normal — SVG coordinate space is abstract. Ask AI to make specific changes:</p>
+      <ul>
+        <li>"Make the brows sharper and more angled, like war paint"</li>
+        <li>"Replace the smooth mouth curve with a jagged zigzag"</li>
+        <li>"The eyes should be sharp diamond shapes, not ellipses"</li>
+      </ul>
+      <p>Keep going until the face feels like <em>your</em> face — not just whatever AI defaulted to.</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">PHASE 5</span>
+      <h3>Publish</h3>
+      <p>Copy your final <code>index.html</code> content into your GitHub repo. Go to your repo → click the file → click the pencil icon to edit → paste your code → commit. Wait ~60 seconds and visit your GitHub Pages URL. You shipped something.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 5: REFLECTION -->
+  <section>
+    <h2>Reflect on What Just Happened</h2>
+    <p>You used AI to build something real. But look at what AI <em>didn't</em> do:</p>
+    <ul>
+      <li>It didn't pick your brand name</li>
+      <li>It didn't choose your colors or aesthetic</li>
+      <li>It didn't decide the logo should turn into a face</li>
+      <li>It didn't know when the face looked wrong</li>
+      <li>It didn't know when to stop iterating</li>
+    </ul>
+    <p>Every single one of those decisions was yours. AI was the hands. You were the mind.</p>
+
+    <div class="big-quote">
+      &ldquo;The fear of AI is really the fear of
+      <span>losing authorship.</span><br />
+      You just proved that doesn't have to happen.&rdquo;
+    </div>
+
+    <div class="reflection">
+      <p>Discussion questions — talk with a partner or write your answers:</p>
+      <ol>
+        <li>At what point in the process did you feel most "in control"? When did you feel least in control?</li>
+        <li>If you had tried to write all this code yourself from scratch, what would have been different about the experience?</li>
+        <li>Can you think of a creative field where AI-as-collaborator would be most useful? Most dangerous?</li>
+        <li>What's one thing AI suggested that you changed or rejected? Why?</li>
+        <li>How is this different from "AI doing it for you"?</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- SECTION 6: GO FURTHER -->
+  <section>
+    <h2>Go Further</h2>
+    <p>The logo animation is just the start. Here's what you can do with the same skills:</p>
+    <ul>
+      <li><strong>Apply it to any brand</strong> — swap the shapes and colors for a band, sports team, podcast, or business</li>
+      <li><strong>Change the transformation</strong> — instead of a face, morph into an animal, a map, a symbol</li>
+      <li><strong>Add sound</strong> — trigger a short audio clip when the face appears using the Web Audio API</li>
+      <li><strong>Make it interactive</strong> — trigger the animation on click or scroll instead of a timer</li>
+      <li><strong>Build a full brand page</strong> — expand the single page into a landing page for your project</li>
+      <li><strong>Generate logo variations</strong> — use an AI image tool with your existing logo as a style reference to explore merchandise, stickers, or alternate colorways</li>
+    </ul>
+    <p>In every case, the same rule applies: <strong>you bring the idea, AI brings the execution speed.</strong> The creativity is always yours to protect.</p>
+  </section>
+
+</main>
+
+<footer>
+  Built with Internationally Tribal &mdash; an example of AI-assisted creative development.
+</footer>
+
+</body>
+</html>
