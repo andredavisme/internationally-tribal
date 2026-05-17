@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chapter 04 Activity — Animated Portfolio</title>
+  <title>Chapter 04 Activity — Animated Portfolio Page</title>
   <style>
     :root { --black: #111; --red: #e00; --white: #f5f5f5; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -63,7 +63,7 @@
 <header>
   <div class="chapter-tag">Chapter 04 — Activity Guide</div>
   <h1>Build an <span>Animated Portfolio</span> Page</h1>
-  <p>Learn scroll-triggered animations, CSS keyframes, and Intersection Observer — while building a real personal portfolio you can actually use.</p>
+  <p>Learn CSS animations, the Intersection Observer API, and layout design — while building a real portfolio page you can customize, deploy, and share.</p>
   <div class="header-links">
     <a href="index.html">&#9654; Open the Portfolio</a>
     <a href="../../hub.html">&larr; All Chapters</a>
@@ -75,72 +75,73 @@
 
   <section>
     <h2>Why This Project?</h2>
-    <p>Chapters 01–03 were all about data — saving it, transforming it, displaying it. Chapter 04 is about <em>presentation</em>. How do you take static content and make it feel alive? How does scroll position drive the page experience? How do you build a layout that works at every screen size?</p>
-    <p>The portfolio is the most universally useful project in this curriculum. Every developer needs one. Building it from scratch — with animations you actually understand — is more valuable than downloading a template you can’t explain.</p>
+    <p>Chapters 01 through 03 were about <em>function</em> — storing data, capturing ideas, generating documents. Chapter 04 is about <em>presence</em>. A portfolio page is the first thing anyone sees. It has to make a visual argument before a single word is read.</p>
+    <p>This chapter teaches the skills that separate "I know HTML" from "I can design for the web" — animation timing, scroll-triggered reveals, responsive layout, and form handling. You'll also add animated counters and a live contact form demo.</p>
 
     <div class="concept-grid">
       <div class="concept-card">
-        <h4>CSS Keyframe Animations</h4>
-        <p>The hero section loads with staggered <code>@keyframes fadeUp</code> animations triggered purely by CSS — no JavaScript needed for the initial reveal.</p>
+        <h4>CSS @keyframes</h4>
+        <p>Declare named animations with <code>@keyframes</code>, then attach them to elements with <code>animation:</code>. Stagger delays to sequence entrance effects without JavaScript.</p>
       </div>
       <div class="concept-card">
-        <h4>Intersection Observer API</h4>
-        <p>A JavaScript API that watches when elements enter the viewport. When they do, a <code>visible</code> class is added — triggering CSS transitions that reveal content as you scroll.</p>
+        <h4>Intersection Observer</h4>
+        <p>A browser API that fires a callback when an element enters or leaves the viewport. The modern way to trigger scroll animations — no scroll event listeners, no performance hit.</p>
       </div>
       <div class="concept-card">
-        <h4>CSS Transitions vs. Animations</h4>
-        <p>Transitions respond to state changes (like adding a class). Animations run on a timeline. Knowing when to use each is a key layout design skill.</p>
+        <h4>CSS Grid + Responsive</h4>
+        <p><code>grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))</code> creates a self-adjusting project grid that works on any screen — no breakpoint math required.</p>
       </div>
       <div class="concept-card">
-        <h4>Multi-Section Layout</h4>
-        <p>A sticky nav, full-height hero, alternating grid sections, and a contact form — all in one file, all responsive, all vanilla CSS grid and flexbox.</p>
+        <h4>Counter Animation</h4>
+        <p><code>requestAnimationFrame</code> with an easing function drives a smooth number count-up effect. The stat goes from 0 to its target over a fixed duration when scrolled into view.</p>
       </div>
     </div>
 
     <div class="tag-row">
       <span class="tag">CSS Animations</span>
       <span class="tag">Intersection Observer</span>
-      <span class="tag">Layout</span>
-      <span class="tag">Responsive</span>
-      <span class="tag">Portfolio</span>
-      <span class="tag">JavaScript</span>
+      <span class="tag">CSS Grid</span>
+      <span class="tag">requestAnimationFrame</span>
+      <span class="tag">Layout Design</span>
+      <span class="tag">Forms</span>
       <span class="tag">GitHub Pages</span>
     </div>
   </section>
 
   <section>
     <h2>The AI Angle for This Chapter</h2>
-    <p>Design-heavy chapters are where AI shines most — and where your judgment matters most. AI can generate beautiful CSS instantly. But it can’t decide what <em>you</em> want to say, how you want to be perceived, or which projects represent your best work.</p>
+    <p>Layout and animation are areas where AI shines — but only if you give it visual context. Describing "a hero section with a centered heading" produces generic output. Describing "a hero with a radial red-to-black gradient, a white all-caps heading at 5rem, and a subtitle in #888 with two buttons below it" produces something you can actually use.</p>
 
     <div class="callout">
-      <p><strong>Your portfolio content is the constraint AI can’t solve for you.</strong> Before prompting any CSS or layout, write the copy: your headline, your one-sentence about, your three best projects. AI builds around your content. Content without a frame is just noise.</p>
+      <p><strong>AI reads specificity.</strong> The more visual precision you bring to your prompt — colors, sizes, spacing, animation timing, easing curves — the closer the first output will be to what you imagined. Vague prompts produce vague layouts.</p>
     </div>
 
     <div class="big-quote">
-      &ldquo;Design is what you intend.
-      <span>Animation is how you reveal the intention.</span>&rdquo;
+      &ldquo;A layout prompt without visual details
+      <span>is a wireframe without dimensions.</span>&rdquo;
     </div>
 
-    <p>Questions to answer before prompting layout:</p>
+    <p>Before prompting any section, define these four things:</p>
     <ul>
-      <li>What’s the one sentence someone should remember about you after leaving this page?</li>
-      <li>What are the three projects you’d most want a collaborator or client to see?</li>
-      <li>What do you want the page to feel like — minimal and sharp, or rich and textured?</li>
-      <li>What’s the one action you want visitors to take? (Contact? View GitHub? Watch the show?)</li>
+      <li>What is the background color/treatment? (solid, gradient, image, pattern)</li>
+      <li>What is the primary typographic hierarchy? (eyebrow → headline → subtext)</li>
+      <li>What animation should fire, and when? (on load vs. on scroll, duration, easing)</li>
+      <li>What's the responsive behavior? (stack on mobile, collapse columns, hide/show)</li>
     </ul>
   </section>
 
   <section>
     <h2>Before You Build — Plan the Sections</h2>
+    <p>A portfolio page is a sequence of sections, each with a job to do. Map yours before you prompt:</p>
     <div class="reflection">
       <ol>
-        <li>List the sections your portfolio needs in order. What’s the first thing someone sees? What’s the last?</li>
-        <li>For each section, describe the animation: does it fade up from below, slide in from the side, or load immediately?</li>
-        <li>What’s the difference between an animation that fires once (on load) and one that fires every time the element enters the viewport? When would you want each?</li>
-        <li>How does a sticky nav change when you scroll past the hero? Describe what should change visually.</li>
-        <li>What should happen when the contact form is submitted? There’s no backend — so what’s the honest user experience?</li>
+        <li>List every section you want: Hero, About, Projects, Stats, Process, Contact are common — but what's yours?</li>
+        <li>For each section, write one sentence about its job. What should the visitor know or feel after reading it?</li>
+        <li>Which sections need animation, and which are static? Too much animation is noise.</li>
+        <li>What's the one piece of information that must survive if someone only spends 5 seconds on the page?</li>
+        <li>If this page replaces a résumé, what would you remove from a traditional résumé that doesn't belong here?</li>
       </ol>
-      <p style="margin-top:1rem;">A portfolio with clear answers to these five questions will feel intentional. One without them will feel like a template someone filled in.</p>
+      <p style="margin-top:1rem;">A portfolio page that answers "Who are you, what have you built, and how do I reach you?" in under 10 seconds is successful. Everything else is decoration.</p>
     </div>
   </section>
 
@@ -149,87 +150,92 @@
 
     <div class="step">
       <span class="step-num">Phase 1</span>
-      <h3>Scaffold the sticky nav and hero</h3>
-      <p>Start with structure before animation. Get the nav fixed at the top and the hero section filling the full viewport height. Content and copy first — animation layer comes later.</p>
-      <pre><code>Build a single-page portfolio in vanilla HTML/CSS/JS.
-Color palette: #111 background, #e00 red accents, #f5f5f5 text.
-Sticky nav with brand name on the left, nav links on the right.
-Full-height hero section (min-height: 100vh) with an eyebrow
-line, a large headline, a subheading, and two CTA buttons.
-No animations yet. Focus on layout and copy placement.</code></pre>
+      <h3>Build the hero section with entrance animations</h3>
+      <p>The hero is the first thing seen. It should communicate your name/brand, your value proposition, and two calls to action — all within a single viewport height. Entrance animations play on load using <code>@keyframes fadeDown</code> with staggered <code>animation-delay</code> values.</p>
+      <pre><code>Build a full-viewport hero section with:
+- A radial gradient background (dark red to black)
+- A small eyebrow label in red uppercase
+- A large all-caps heading with one word highlighted red
+- A subtitle in muted gray (#888)
+- Two buttons: one solid red (primary CTA), one outlined ghost
+- A scroll hint arrow at the bottom with a bounce animation
+Entrance: each element fades in from above (translateY -16px to 0)
+with staggered animation-delay: 0s, 0.12s, 0.24s, 0.36s.
+Pure HTML/CSS. No frameworks.</code></pre>
     </div>
 
     <div class="step">
       <span class="step-num">Phase 2</span>
-      <h3>Add CSS keyframe animations to the hero</h3>
-      <p>The hero loads immediately — no scroll trigger. Use <code>@keyframes</code> with staggered <code>animation-delay</code> values so the eyebrow, headline, subheading, and buttons each appear 0.2s apart. This creates a "reveal" feel without JavaScript.</p>
-      <pre><code>Add a fadeUp @keyframes animation that moves elements from
-opacity:0 translateY(24px) to opacity:1 translateY(0).
-Apply it to each hero element with staggered delays:
-eyebrow: 0.2s, headline: 0.4s, subheading: 0.6s, buttons: 0.8s.
-Use animation-fill-mode: forwards so elements stay visible
-after the animation completes. Start each at opacity:0.</code></pre>
+      <h3>Add scroll-reveal with Intersection Observer</h3>
+      <p>Elements outside the viewport start invisible and slide in when they enter the scroll view. Add three reveal classes: <code>.reveal</code> (fade up), <code>.reveal-left</code>, and <code>.reveal-right</code>. A single <code>IntersectionObserver</code> toggles the <code>.visible</code> class on all of them.</p>
+      <pre><code>Write an IntersectionObserver that:
+1. Observes all elements with class .reveal, .reveal-left, .reveal-right
+2. When an element intersects (threshold: 0.12), adds class .visible
+3. .reveal starts at opacity:0, translateY(32px) → transitions to
+   opacity:1, translateY(0) over 0.65s ease
+4. .reveal-left starts at translateX(-40px), .reveal-right at
+   translateX(40px) — both transition to translateX(0)
+Add these classes to every section heading and content block.</code></pre>
     </div>
 
     <div class="step">
       <span class="step-num">Phase 3</span>
-      <h3>Build the content sections + scroll reveal classes</h3>
-      <p>Add the About, Skills, Projects, and Contact sections. Apply a <code>.reveal</code> class to every element that should animate on scroll. Style <code>.reveal</code> as hidden (opacity:0, translateY) and <code>.reveal.visible</code> as fully shown. The JavaScript that adds <code>visible</code> comes next.</p>
-      <pre><code>Add four content sections: About (two-column with bio and stats),
-Skills (grid of skill cards), Projects (card grid with links),
-Contact (split layout with info on left, form on right).
-Give every element that should animate the class "reveal".
-Style .reveal as { opacity:0; transform: translateY(32px);
-transition: opacity 0.65s ease, transform 0.65s ease; }
-and .reveal.visible as { opacity:1; transform: translateY(0); }</code></pre>
+      <h3>Build the project grid</h3>
+      <p>A self-filling CSS grid of project cards. Each card has an icon, title, description, tag chips, and a hover arrow. The grid uses <code>auto-fill</code> with <code>minmax</code> — no media queries needed for the columns.</p>
+      <pre><code>Build a project grid section using:
+grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
+Each card has: an emoji icon, a bold title, a short description,
+a row of small tag chips, and a right-arrow that turns red on hover.
+Card hover: lift with translateY(-4px) and a red border.
+Add .reveal class to each card for scroll-in animation.
+Include real project entries: at least 4 cards with distinct content.</code></pre>
     </div>
 
     <div class="step">
       <span class="step-num">Phase 4</span>
-      <h3>Wire up Intersection Observer</h3>
-      <p>This is the JavaScript layer that watches each <code>.reveal</code> element and adds the <code>visible</code> class when it enters the viewport. The CSS does the animation — JavaScript just toggles the class.</p>
-      <pre><code>Write a JavaScript Intersection Observer that:
-1. Selects all elements with class "reveal"
-2. Creates an IntersectionObserver with threshold: 0.12
-3. In the callback, if entry.isIntersecting is true,
-   adds the class "visible" to the element
-The observer should fire once per element — elements don't
-need to hide again when scrolled past.</code></pre>
+      <h3>Add animated stat counters</h3>
+      <p>A full-width red stats bar with 4 numbers that count up from 0 to their target when scrolled into view. The counter animation uses <code>requestAnimationFrame</code> with a cubic ease-out function for a natural deceleration feel.</p>
+      <pre><code>Add a stats bar section with a solid red background.
+Inside: 4 stat blocks (number + label), laid out in a grid.
+Each number has data-target="X" attribute.
+When the IntersectionObserver fires on the parent .reveal element,
+run animateCounter(el):
+- duration: 1200ms
+- easing: ease-out cubic (1 - Math.pow(1 - progress, 3))
+- update el.textContent = Math.round(ease * target)
+using requestAnimationFrame until progress >= 1.</code></pre>
     </div>
 
     <div class="step">
       <span class="step-num">Phase 5</span>
-      <h3>Polish: skill bars, form UX, and mobile</h3>
-      <p>Three final details that separate a finished portfolio from a draft: animated skill bar fills (triggered by the same observer), a contact form that gives honest feedback (no backend — just a confirmation message), and a responsive layout that looks right on mobile.</p>
-      <pre><code>1. Skill bars: each .skill-bar has a data-width attribute.
-   When its parent .reveal becomes visible, set
-   bar.style.width = bar.dataset.width + '%' with a 200ms delay.
-2. Contact form: on submit, prevent default, show a loading
-   state on the button, then after 900ms show a success message
-   and reset the form. No actual email sending.
-3. Mobile: test at 375px. Nav links should collapse or wrap.
-   Two-column grids should drop to one column.
-   Hero text should scale with clamp().</code></pre>
+      <h3>Build the contact section and form</h3>
+      <p>A two-column layout: contact info on the left (links, location, bio), a working form on the right. The form captures name, email, subject, and message — and on submit shows a toast confirmation (no server needed for the demo).</p>
+      <pre><code>Build a two-column contact section:
+Left: short intro paragraph, location line, and two icon+link rows
+(e.g. GitHub link, live show link).
+Right: a form with name, email, subject (text), and message (textarea)
+inputs. On submit (preventDefault), show a toast notification:
+"✅ Message received, [name]! (Demo — no server)"
+and reset the form. Match the dark form field styling from Ch 03.
+Add reveal-left to left column, reveal-right to right column.</code></pre>
     </div>
   </section>
 
   <section>
     <h2>Concepts You Just Used</h2>
     <ul>
-      <li><code>@keyframes</code> — define a reusable animation timeline in CSS</li>
-      <li><code>animation-delay</code> — stagger animations so elements appear one after another</li>
-      <li><code>animation-fill-mode: forwards</code> — keep an element in its final animated state</li>
-      <li><code>transition: opacity transform</code> — smoothly animate between two CSS states</li>
-      <li><code>IntersectionObserver</code> — watch when elements enter/exit the viewport without scroll event listeners</li>
-      <li><code>entry.isIntersecting</code> — boolean that tells you if the element is currently visible</li>
-      <li><code>element.classList.add('visible')</code> — the bridge between JS observation and CSS animation</li>
-      <li><code>clamp(min, preferred, max)</code> — fluid typography that scales between a minimum and maximum size</li>
-      <li><code>position: sticky</code> — an element that scrolls normally until it hits a threshold, then sticks</li>
-      <li><code>scroll-behavior: smooth</code> — enables smooth scrolling for anchor links</li>
+      <li><code>@keyframes</code> + <code>animation:</code> — define reusable named animations and attach them to elements with timing, delay, and fill-mode</li>
+      <li><code>animation-delay</code> — stagger entrance animations without JavaScript by offsetting each element's start time</li>
+      <li><code>IntersectionObserver</code> — fire callbacks when elements enter the viewport; toggle a class to trigger CSS transitions</li>
+      <li><code>requestAnimationFrame(step)</code> — schedule frame-by-frame animation updates; far more efficient than <code>setInterval</code></li>
+      <li>Easing with math — <code>1 - Math.pow(1 - t, 3)</code> is ease-out cubic: fast start, gentle landing</li>
+      <li><code>grid-template-columns: repeat(auto-fill, minmax(...))</code> — fluid responsive grid with no media queries</li>
+      <li><code>position: sticky</code> + <code>backdrop-filter: blur()</code> — frosted-glass sticky nav</li>
+      <li><code>scroll-behavior: smooth</code> on <code>html</code> — native smooth scrolling to anchor links</li>
     </ul>
 
     <div class="callout">
-      <p><strong>Intersection Observer replaced scroll event listeners</strong> for most animation use cases. Scroll listeners fire hundreds of times per second and can tank performance. IntersectionObserver fires only when the visibility state actually changes — it’s purpose-built for exactly this pattern.</p>
+      <p><strong>Intersection Observer is the key upgrade from Chapter 01.</strong> In Ch 01 you used timers. Here you used the browser's built-in viewport detection — which is how every modern animation library (GSAP ScrollTrigger, Framer Motion) works under the hood. You just built the same thing from scratch.</p>
     </div>
   </section>
 
@@ -237,13 +243,13 @@ need to hide again when scrolled past.</code></pre>
     <h2>Reflect</h2>
     <div class="reflection">
       <ol>
-        <li>What’s the difference between a CSS <code>transition</code> and a CSS <code>animation</code>? Give an example of when you’d use each.</li>
-        <li>Why is IntersectionObserver better than a scroll event listener for this use case? What would break if you used a scroll listener instead?</li>
-        <li>The hero animations use CSS only. The scroll animations use JavaScript. Why the difference? Could you do both with just CSS?</li>
-        <li>The contact form doesn’t actually send anything. What would you need to add to make it functional — and what’s the simplest way to do that without a backend?</li>
-        <li>If a recruiter or client landed on your portfolio, what’s the one thing you wish it said more clearly? How would you change it?</li>
+        <li>What's the difference between a CSS animation and a CSS transition? When would you use each?</li>
+        <li>Why is Intersection Observer better than a scroll event listener for reveal animations? What's the performance difference?</li>
+        <li>The stat counter uses <code>requestAnimationFrame</code>. Why not just use <code>setInterval</code>?</li>
+        <li>The contact form doesn't actually send anything. What would you need to add to make it functional? (Hint: look up Formspree or EmailJS.)</li>
+        <li>If you had to cut three sections to make this page load twice as fast, which would you cut and why?</li>
       </ol>
-      <p style="margin-top:1rem;">The skills you used in this chapter — layout, animation, observer APIs — appear in every modern web app. You’ve now built the full stack of browser capabilities: storage, DOM, math, rendering, and motion.</p>
+      <p style="margin-top:1rem;">A portfolio page is never finished — but it can be shipped. The difference between developers who have portfolios and those who don't usually isn't skill. It's willingness to publish something imperfect.</p>
     </div>
   </section>
 
@@ -251,35 +257,35 @@ need to hide again when scrolled past.</code></pre>
     <h2>Go Further</h2>
     <div class="extend-grid">
       <div class="extend-card">
-        <h4>&#127759; Dark / Light Toggle</h4>
-        <p>Add a theme toggle button that switches between dark and light mode using a CSS class on <code>body</code>. Persist the preference in localStorage.</p>
+        <h4>&#127775; Dark/Light Toggle</h4>
+        <p>Add a theme toggle button. Switch CSS custom properties on <code>:root</code> between dark and light palettes. Persist preference in localStorage.</p>
       </div>
       <div class="extend-card">
-        <h4>&#128247; Real Project Screenshots</h4>
-        <p>Replace the project card placeholders with actual screenshots. Use <code>object-fit: cover</code> to keep images uniform across different aspect ratios.</p>
+        <h4>&#127916; Project Modal</h4>
+        <p>Clicking a project card opens a full-screen modal with a detailed case study — screenshots, tech stack, lessons learned. Close with Escape key.</p>
       </div>
       <div class="extend-card">
-        <h4>&#128233; Working Contact Form</h4>
-        <p>Connect the form to a free service like Formspree or EmailJS to actually send messages without a backend.</p>
+        <h4>&#128232; Real Contact Form</h4>
+        <p>Wire the contact form to Formspree or EmailJS so messages actually arrive in your inbox — no backend code required.</p>
       </div>
       <div class="extend-card">
-        <h4>&#128203; Filterable Projects</h4>
-        <p>Add filter buttons (All, Web, Game, Tools) that show/hide project cards using <code>display:none</code> and CSS transitions.</p>
+        <h4>&#127891; Skills Progress Bars</h4>
+        <p>Add animated horizontal progress bars to the About section. Each bar fills from 0% to its target width when scrolled into view using the same Intersection Observer.</p>
       </div>
       <div class="extend-card">
-        <h4>&#127881; Particle Background</h4>
-        <p>Add a subtle animated canvas background to the hero using requestAnimationFrame — floating dots or grid lines that respond to mouse movement.</p>
+        <h4>&#128247; Custom Avatar</h4>
+        <p>Replace the emoji avatar with a real image upload or a CSS-drawn geometric portrait. The spinning ring animation stays.</p>
       </div>
       <div class="extend-card">
-        <h4>&#128337; Typed Headline</h4>
-        <p>Replace the static hero headline with a typewriter effect that cycles through 3–4 roles using a simple JS interval and string slicing.</p>
+        <h4>&#128196; Downloadable CV</h4>
+        <p>Add a "Download CV" button that either links to a PDF or generates one dynamically using the same <code>window.print()</code> technique from Chapter 03.</p>
       </div>
     </div>
 
     <div class="up-next">
       <span class="up-next-label">Up Next — Chapter 05</span>
       <h3>Meeting Note Taker</h3>
-      <p>Build a structured note-taking app with auto-timestamping, action item tagging, and one-click export to plain text or markdown. You’ll learn Date APIs, string formatting, and the Clipboard API.</p>
+      <p>Build a structured note-taking app with auto-timestamping, action item tagging, and one-click export to plain text or markdown. You'll learn keyboard shortcuts, rich text handling, and file download APIs.</p>
       <a href="../../hub.html">Start Chapter 05 &rarr;</a>
     </div>
   </section>

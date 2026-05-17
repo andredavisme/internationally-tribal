@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chapter 04 — Animated Portfolio</title>
+  <title>Chapter 04 — Animated Portfolio Page</title>
   <style>
     :root {
       --black: #111;
       --red: #e00;
       --white: #f5f5f5;
-      --gray: #888;
+      --gray: #1a1a1a;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -17,45 +17,25 @@
       background: var(--black);
       color: var(--white);
       font-family: 'Segoe UI', Arial, sans-serif;
-      overflow-x: hidden;
     }
 
     /* ── NAV ── */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 1rem 2rem;
-      background: rgba(17,17,17,0.92);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.9rem 1.5rem;
+      border-bottom: 2px solid #1e1e1e;
+      background: rgba(17,17,17,0.95);
+      position: sticky;
+      top: 0;
+      z-index: 200;
       backdrop-filter: blur(8px);
-      border-bottom: 1px solid #1e1e1e;
-      transition: border-color 0.3s;
     }
-    .nav-brand {
-      font-size: 0.9rem; font-weight: bold; text-transform: uppercase;
-      letter-spacing: 0.08em; color: var(--white); text-decoration: none;
-    }
-    .nav-brand span { color: var(--red); }
-    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
-    .nav-links a {
-      color: #666; font-size: 0.8rem; text-transform: uppercase;
-      letter-spacing: 0.07em; text-decoration: none;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--white); }
-    .nav-links .nav-cta {
-      color: var(--red); border: 1px solid var(--red);
-      padding: 0.35rem 0.9rem; border-radius: 3px;
-      transition: background 0.2s, color 0.2s;
-    }
-    .nav-links .nav-cta:hover { background: var(--red); color: white; }
-    .nav-hub {
-      color: #444; font-size: 0.75rem; text-transform: uppercase;
-      letter-spacing: 0.07em; text-decoration: none;
-      transition: color 0.2s;
-    }
-    .nav-hub:hover { color: var(--red); }
+    nav a { color: var(--red); text-decoration: none; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    nav span { color: #444; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
 
-    /* ── SCROLL REVEAL ── */
+    /* ── REVEAL ANIMATION ── */
     .reveal {
       opacity: 0;
       transform: translateY(32px);
@@ -81,213 +61,338 @@
     /* ── HERO ── */
     .hero {
       min-height: 100vh;
-      display: flex; flex-direction: column;
-      justify-content: center; align-items: flex-start;
-      padding: 8rem 2rem 4rem;
-      max-width: 900px; margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 3rem 1.5rem;
+      position: relative;
+      overflow: hidden;
     }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 60%, #1a0000 0%, #111 60%);
+      z-index: 0;
+    }
+    .hero-content { position: relative; z-index: 1; }
     .hero-eyebrow {
-      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.18em;
-      color: var(--red); margin-bottom: 1.25rem;
-      opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--red);
+      margin-bottom: 1.25rem;
+      animation: fadeDown 0.7s ease both;
     }
     .hero h1 {
-      font-size: clamp(2.4rem, 7vw, 5rem);
-      line-height: 1.08; letter-spacing: -0.01em;
-      margin-bottom: 1.5rem;
-      opacity: 0; animation: fadeUp 0.7s 0.4s forwards;
+      font-size: clamp(2.2rem, 7vw, 5rem);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+      animation: fadeDown 0.7s 0.12s ease both;
     }
     .hero h1 span { color: var(--red); }
     .hero-sub {
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      color: #777; max-width: 540px; line-height: 1.7;
-      margin-bottom: 2.5rem;
-      opacity: 0; animation: fadeUp 0.7s 0.6s forwards;
+      margin-top: 1.25rem;
+      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+      color: #888;
+      max-width: 540px;
+      line-height: 1.6;
+      animation: fadeDown 0.7s 0.24s ease both;
     }
-    .hero-actions {
-      display: flex; gap: 1rem; flex-wrap: wrap;
-      opacity: 0; animation: fadeUp 0.7s 0.8s forwards;
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeDown 0.7s 0.36s ease both;
     }
-    .btn-primary {
-      background: var(--red); color: white;
-      text-decoration: none; padding: 0.75rem 1.75rem;
-      border-radius: 4px; font-size: 0.88rem;
-      text-transform: uppercase; letter-spacing: 0.07em;
-      transition: opacity 0.2s;
+    .btn-cta {
+      display: inline-block;
+      text-decoration: none;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 0.65rem 1.5rem;
+      border-radius: 4px;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
     }
-    .btn-primary:hover { opacity: 0.85; }
-    .btn-outline {
-      background: transparent; color: var(--white);
-      text-decoration: none; padding: 0.75rem 1.75rem;
-      border: 1px solid #333; border-radius: 4px; font-size: 0.88rem;
-      text-transform: uppercase; letter-spacing: 0.07em;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .btn-outline:hover { border-color: var(--red); color: var(--red); }
-    .hero-scroll {
-      position: absolute; bottom: 2.5rem; left: 50%;
+    .btn-cta.primary { background: var(--red); color: white; border: 1px solid var(--red); }
+    .btn-cta.primary:hover { background: #c00; border-color: #c00; }
+    .btn-cta.ghost { background: transparent; color: var(--white); border: 1px solid #333; }
+    .btn-cta.ghost:hover { border-color: var(--red); color: var(--red); }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
       transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
-      color: #333; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em;
-      opacity: 0; animation: fadeIn 1s 1.4s forwards;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      color: #333;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      animation: fadeDown 0.7s 0.5s ease both;
     }
-    .hero-scroll::after {
-      content: ''; display: block; width: 1px; height: 40px;
-      background: linear-gradient(to bottom, #444, transparent);
-      animation: scrollLine 2s 1.5s infinite;
+    .scroll-arrow {
+      width: 18px; height: 18px;
+      border-right: 2px solid #333;
+      border-bottom: 2px solid #333;
+      transform: rotate(45deg);
+      animation: bounce 1.5s infinite;
     }
-    @keyframes scrollLine { 0%,100%{opacity:0.3;} 50%{opacity:1;} }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(24px);} to{opacity:1;transform:translateY(0);} }
-    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+    @keyframes bounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50% { transform: rotate(45deg) translateY(5px); }
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-    /* ── SECTION SHARED ── */
-    section {
-      padding: 6rem 2rem;
-      max-width: 1000px; margin: 0 auto;
+    /* ── SECTION WRAPPER ── */
+    .section {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 5rem 1.5rem;
     }
     .section-label {
-      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.16em;
-      color: var(--red); margin-bottom: 0.75rem;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--red);
+      margin-bottom: 0.6rem;
     }
     .section-title {
-      font-size: clamp(1.6rem, 4vw, 2.6rem);
-      line-height: 1.15; margin-bottom: 1rem;
+      font-size: clamp(1.5rem, 4vw, 2.8rem);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
     }
-    .section-sub {
-      color: #666; font-size: 1rem; line-height: 1.7;
-      max-width: 540px; margin-bottom: 3rem;
-    }
-    .divider {
-      border: none; border-top: 1px solid #1e1e1e;
-      margin: 0;
+    .section-title span { color: var(--red); }
+    .section-divider {
+      border: none;
+      border-top: 1px solid #1e1e1e;
     }
 
     /* ── ABOUT ── */
     .about-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
       align-items: center;
+      margin-top: 3rem;
     }
     @media (max-width: 680px) { .about-grid { grid-template-columns: 1fr; gap: 2rem; } }
-    .about-avatar {
-      width: 100%; aspect-ratio: 1;
-      max-width: 320px;
+    .about-body p {
+      color: #999;
+      font-size: 1rem;
+      line-height: 1.75;
+      margin-bottom: 1rem;
+    }
+    .about-body p strong { color: var(--white); }
+    .skill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+    .skill-pill {
+      background: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      color: #888;
+      font-size: 0.78rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .skill-pill:hover { border-color: var(--red); color: var(--white); }
+    .about-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .avatar-frame {
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      border: 3px solid var(--red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      background: #1a1a1a;
+      position: relative;
+      overflow: hidden;
+    }
+    .avatar-ring {
+      position: absolute; inset: -12px;
+      border-radius: 50%;
+      border: 1px solid #2a2a2a;
+      animation: spin 16s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── PROJECTS ── */
+    .projects-section { background: #0d0d0d; }
+    .projects-inner {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 5rem 1.5rem;
+    }
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    .project-card {
       background: #1a1a1a;
       border: 1px solid #2a2a2a;
       border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 5rem;
-      color: #2a2a2a;
-    }
-    .about-text h3 { font-size: 1.4rem; margin-bottom: 1rem; }
-    .about-text p { color: #888; line-height: 1.8; margin-bottom: 1rem; }
-    .about-stats {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
-      margin-top: 1.5rem;
-    }
-    .stat { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1rem; }
-    .stat-num { font-size: 1.6rem; font-weight: bold; color: var(--red); }
-    .stat-label { font-size: 0.75rem; color: #555; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.25rem; }
-
-    /* ── SKILLS ── */
-    .skills-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;
-    }
-    .skill-card {
-      background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px;
-      padding: 1.25rem; transition: border-color 0.2s;
-    }
-    .skill-card:hover { border-color: #444; }
-    .skill-icon { font-size: 1.5rem; margin-bottom: 0.6rem; }
-    .skill-name { font-size: 0.88rem; font-weight: bold; margin-bottom: 0.25rem; }
-    .skill-desc { font-size: 0.78rem; color: #555; line-height: 1.5; }
-    .skill-bar-wrap { margin-top: 0.75rem; background: #222; border-radius: 4px; height: 3px; overflow: hidden; }
-    .skill-bar { height: 100%; background: var(--red); border-radius: 4px; width: 0; transition: width 1s ease; }
-
-    /* ── PROJECTS ── */
-    .projects-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1.5rem;
-    }
-    .project-card {
-      background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px;
-      padding: 1.75rem; display: flex; flex-direction: column; gap: 0.6rem;
+      padding: 1.75rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: inherit;
       transition: border-color 0.2s, transform 0.2s;
-      text-decoration: none; color: inherit;
+      position: relative;
     }
-    .project-card:hover { border-color: var(--red); transform: translateY(-3px); }
+    .project-card:hover { border-color: var(--red); transform: translateY(-4px); }
+    .project-icon { font-size: 1.75rem; margin-bottom: 0.25rem; }
+    .project-title { font-size: 1.1rem; font-weight: bold; color: var(--white); }
+    .project-desc { font-size: 0.88rem; color: #888; line-height: 1.5; flex: 1; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
     .project-tag {
-      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--red);
+      background: #252525;
+      border: 1px solid #383838;
+      color: #666;
+      font-size: 0.72rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
-    .project-title { font-size: 1.1rem; font-weight: bold; line-height: 1.3; }
-    .project-desc { font-size: 0.88rem; color: #666; line-height: 1.6; flex: 1; }
-    .project-footer {
-      display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;
-    }
-    .project-chip {
-      background: #222; border: 1px solid #333; color: #666;
-      font-size: 0.7rem; padding: 0.2rem 0.55rem; border-radius: 20px;
-      text-transform: uppercase; letter-spacing: 0.04em;
-    }
-    .project-arrow {
-      align-self: flex-end; color: #333; font-size: 1.1rem;
-      transition: color 0.2s;
-    }
+    .project-arrow { position: absolute; bottom: 1.25rem; right: 1.25rem; color: #333; font-size: 1.1rem; transition: color 0.2s; }
     .project-card:hover .project-arrow { color: var(--red); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: var(--red);
+      padding: 2.5rem 1.5rem;
+    }
+    .stats-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 2rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: bold;
+      color: white;
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.7);
+      margin-top: 0.4rem;
+    }
+
+    /* ── PROCESS ── */
+    .process-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    .process-item {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 1.5rem;
+      align-items: flex-start;
+      padding: 1.5rem;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      transition: border-color 0.2s;
+    }
+    .process-item:hover { border-color: #444; }
+    .process-num {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: var(--red);
+      line-height: 1;
+    }
+    .process-title { font-size: 1.05rem; font-weight: bold; color: var(--white); margin-bottom: 0.3rem; }
+    .process-desc { font-size: 0.9rem; color: #888; line-height: 1.6; }
 
     /* ── CONTACT ── */
     .contact-grid {
-      display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; align-items: start;
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 4rem;
+      align-items: flex-start;
+      margin-top: 3rem;
     }
-    @media (max-width: 700px) { .contact-grid { grid-template-columns: 1fr; gap: 2rem; } }
-    .contact-info h3 { font-size: 1.2rem; margin-bottom: 1rem; }
-    .contact-info p { color: #666; line-height: 1.7; margin-bottom: 1.5rem; font-size: 0.9rem; }
+    @media (max-width: 680px) { .contact-grid { grid-template-columns: 1fr; gap: 2rem; } }
+    .contact-info p { color: #888; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1rem; }
     .contact-link {
-      display: flex; align-items: center; gap: 0.75rem;
-      color: #555; text-decoration: none; font-size: 0.85rem;
-      margin-bottom: 0.75rem; transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: #888;
+      font-size: 0.9rem;
+      text-decoration: none;
+      margin-bottom: 0.75rem;
+      transition: color 0.2s;
     }
     .contact-link:hover { color: var(--red); }
-    .contact-link-icon { font-size: 1rem; width: 20px; text-align: center; }
-    .form-group { margin-bottom: 1rem; }
-    .form-group label {
-      display: block; font-size: 0.72rem; text-transform: uppercase;
-      letter-spacing: 0.07em; color: #555; margin-bottom: 0.3rem;
-    }
-    .form-group input, .form-group textarea, .form-group select {
-      width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a;
-      color: var(--white); font-family: inherit; font-size: 0.88rem;
-      padding: 0.6rem 0.85rem; border-radius: 4px; outline: none;
+    .contact-link .icon { font-size: 1rem; }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 0.7rem 1rem;
+      border-radius: 4px;
+      outline: none;
       transition: border-color 0.2s;
     }
-    .form-group input:focus, .form-group textarea:focus { border-color: var(--red); }
-    .form-group input::placeholder, .form-group textarea::placeholder { color: #333; }
-    .form-group textarea { resize: vertical; min-height: 110px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-    .submit-btn {
-      width: 100%; background: var(--red); color: white; border: none;
-      font-family: inherit; font-size: 0.85rem; text-transform: uppercase;
-      letter-spacing: 0.08em; padding: 0.8rem 1.5rem;
-      border-radius: 4px; cursor: pointer;
-      transition: opacity 0.2s; margin-top: 0.5rem;
+    .contact-form input:focus,
+    .contact-form textarea:focus { border-color: var(--red); }
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder { color: #444; }
+    .contact-form textarea { resize: vertical; min-height: 130px; }
+    .contact-form button {
+      align-self: flex-start;
+      background: var(--red);
+      border: none;
+      color: white;
+      font-family: inherit;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 0.65rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
     }
-    .submit-btn:hover { opacity: 0.85; }
-    #form-msg {
-      font-size: 0.8rem; color: #3a3; margin-top: 0.75rem;
-      display: none;
-    }
-
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid #1e1e1e;
-      padding: 2.5rem 2rem;
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 1rem;
-      max-width: 1000px; margin: 0 auto;
-    }
-    .footer-copy { color: #333; font-size: 0.8rem; }
-    .footer-links { display: flex; gap: 1.25rem; }
-    .footer-links a { color: #444; font-size: 0.8rem; text-decoration: none; transition: color 0.2s; }
-    .footer-links a:hover { color: var(--red); }
+    .contact-form button:hover { background: #c00; }
 
     /* ── TOAST ── */
     #toast {
@@ -301,272 +406,284 @@
       pointer-events: none; white-space: nowrap; z-index: 9999;
     }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      color: #444;
+      font-size: 0.8rem;
+      border-top: 1px solid #1e1e1e;
+    }
+    footer a { color: var(--red); text-decoration: none; }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-  <a class="nav-brand" href="#hero">Andre <span>Davis</span></a>
-  <div class="nav-links">
-    <a href="#about">About</a>
-    <a href="#skills">Skills</a>
-    <a href="#projects">Projects</a>
-    <a href="#contact" class="nav-cta">Contact</a>
-  </div>
-  <a class="nav-hub" href="../../hub.html">&larr; Hub</a>
+  <a href="../../hub.html">&larr; All Chapters</a>
+  <span>Ch 04 — Animated Portfolio</span>
+  <a href="activity.html">&#128218; Activity Guide</a>
 </nav>
 
-<!-- HERO -->
-<div class="hero" id="hero">
-  <div class="hero-eyebrow">Full-Stack Developer &amp; Entrepreneur</div>
-  <h1>Building things<br>that <span>actually work.</span></h1>
-  <p class="hero-sub">I design and build web applications, tools, and experiences — from interactive games to business portals — with AI as a collaborator and human vision at the center.</p>
-  <div class="hero-actions">
-    <a href="#projects" class="btn-primary">See My Work</a>
-    <a href="#contact" class="btn-outline">Get In Touch</a>
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Andre Davis &mdash; Digital Creative</div>
+    <h1>Building <span>Worlds</span><br>One Channel at a Time</h1>
+    <p class="hero-sub">Developer. Streamer. Brand architect. Turning ideas into live experiences — from Portland, Maine to everywhere.</p>
+    <div class="hero-ctas">
+      <a href="#projects" class="btn-cta primary">View Projects</a>
+      <a href="https://andredavisme.github.io/newscapes-live/" target="_blank" class="btn-cta ghost">&#9654; Newscapes Live!</a>
+    </div>
   </div>
-  <div class="hero-scroll">Scroll</div>
+  <div class="hero-scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<div class="section">
+  <div class="section-label reveal">About</div>
+  <h2 class="section-title reveal">The <span>Person</span> Behind the Build</h2>
+  <div class="about-grid">
+    <div class="about-body reveal-left">
+      <p><strong>Andre Davis</strong> is a full-stack developer and digital entrepreneur based in Portland, Maine. He builds tools, platforms, and live experiences — anything from industrial parts-matching systems to weekly streaming shows.</p>
+      <p>His approach: start on the whiteboard, build in public, ship fast. Every project is a chapter in a larger story about what's possible when creativity meets code.</p>
+      <p>Currently streaming weekly on <a href="https://andredavisme.github.io/newscapes-live/" target="_blank" style="color:var(--red);">Newscapes Live!</a> — covering tech, culture, and ideas that matter.</p>
+      <div class="skill-list">
+        <span class="skill-pill">JavaScript</span>
+        <span class="skill-pill">HTML / CSS</span>
+        <span class="skill-pill">Supabase</span>
+        <span class="skill-pill">GitHub Pages</span>
+        <span class="skill-pill">OBS</span>
+        <span class="skill-pill">Live Streaming</span>
+        <span class="skill-pill">Brand Design</span>
+        <span class="skill-pill">AI-Assisted Dev</span>
+      </div>
+    </div>
+    <div class="about-visual reveal-right">
+      <div class="avatar-frame">
+        <div class="avatar-ring"></div>
+        &#127757;
+      </div>
+    </div>
+  </div>
 </div>
 
-<hr class="divider" />
+<hr class="section-divider" />
 
-<!-- ABOUT -->
-<section id="about">
-  <div class="section-label reveal">About</div>
-  <div class="about-grid">
-    <div class="reveal-left">
-      <div class="about-avatar">&#128100;</div>
-    </div>
-    <div class="reveal-right">
-      <div class="about-text">
-        <h3>Andre Davis — Portland, Maine</h3>
-        <p>I’m a full-stack developer and entrepreneur based in Portland, ME. I build real tools for real problems — invoice generators, sticky note boards, live show support apps, industrial parts matchers, and turn-based games.</p>
-        <p>I use AI as a collaborator and execution engine. My job is to define the vision, design the system, and ship something that works. AI handles the speed. I handle the judgment.</p>
-        <p>I also host a weekly live show, <a href="https://andredavisme.github.io/newscapes-live/" style="color:var(--red)">Newscapes Live!</a> — where I bring the same build-in-public energy to content creation.</p>
-        <div class="about-stats">
-          <div class="stat"><div class="stat-num">8+</div><div class="stat-label">Projects Shipped</div></div>
-          <div class="stat"><div class="stat-num">4</div><div class="stat-label">Chapters Live</div></div>
-          <div class="stat"><div class="stat-num">1</div><div class="stat-label">Weekly Live Show</div></div>
-          <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Ideas in Queue</div></div>
+<!-- ── PROJECTS ── -->
+<div class="projects-section" id="projects">
+  <div class="projects-inner">
+    <div class="section-label reveal">Work</div>
+    <h2 class="section-title reveal">Selected <span>Projects</span></h2>
+    <div class="project-grid">
+
+      <a class="project-card reveal" href="https://andredavisme.github.io/newscapes-live/" target="_blank">
+        <div class="project-icon">&#9654;</div>
+        <div class="project-title">Newscapes Live!</div>
+        <div class="project-desc">Weekly live show platform. Custom web app for show support, scheduling, and audience engagement — built on GitHub Pages.</div>
+        <div class="project-tags">
+          <span class="project-tag">Streaming</span>
+          <span class="project-tag">Live Show</span>
+          <span class="project-tag">JavaScript</span>
+        </div>
+        <span class="project-arrow">&rarr;</span>
+      </a>
+
+      <a class="project-card reveal" href="https://andredavisme.github.io/chronicle-worlds/" target="_blank">
+        <div class="project-icon">&#127758;</div>
+        <div class="project-title">Chronicle Worlds</div>
+        <div class="project-desc">Turn-based multiplayer procedural world simulation. Players claim territories, manage resources, and shape a living game world.</div>
+        <div class="project-tags">
+          <span class="project-tag">Game Dev</span>
+          <span class="project-tag">Supabase</span>
+          <span class="project-tag">Turn-Based</span>
+        </div>
+        <span class="project-arrow">&rarr;</span>
+      </a>
+
+      <a class="project-card reveal" href="https://andredavisme.github.io/parts-spec-matcher/" target="_blank">
+        <div class="project-icon">&#9881;</div>
+        <div class="project-title">Parts Spec Matcher</div>
+        <div class="project-desc">Industrial parts matching tool that cross-references specs across manufacturer databases — built for real-world procurement workflows.</div>
+        <div class="project-tags">
+          <span class="project-tag">Industrial</span>
+          <span class="project-tag">Search</span>
+          <span class="project-tag">Data</span>
+        </div>
+        <span class="project-arrow">&rarr;</span>
+      </a>
+
+      <a class="project-card reveal" href="https://andredavisme.github.io/internationally-tribal/" target="_blank">
+        <div class="project-icon">&#127981;</div>
+        <div class="project-title">AI Creative Lab</div>
+        <div class="project-desc">A living textbook — each chapter is a real deployable app built with AI as co-pilot. Logo to invoice to portfolio.</div>
+        <div class="project-tags">
+          <span class="project-tag">Education</span>
+          <span class="project-tag">AI Dev</span>
+          <span class="project-tag">GitHub Pages</span>
+        </div>
+        <span class="project-arrow">&rarr;</span>
+      </a>
+
+      <div class="project-card reveal" style="cursor:default;">
+        <div class="project-icon">&#128205;</div>
+        <div class="project-title">207 Analytix</div>
+        <div class="project-desc">Business intelligence portal for local Maine businesses. Analytics dashboards, automated reporting via Google Apps Script.</div>
+        <div class="project-tags">
+          <span class="project-tag">Analytics</span>
+          <span class="project-tag">Dashboards</span>
+          <span class="project-tag">GAS</span>
         </div>
       </div>
+
+      <div class="project-card reveal" style="cursor:default;">
+        <div class="project-icon">&#127807;</div>
+        <div class="project-title">Lawnscaping Services</div>
+        <div class="project-desc">Full business portal — scheduling, client management, invoicing, and service tracking for a field operations company.</div>
+        <div class="project-tags">
+          <span class="project-tag">Business Portal</span>
+          <span class="project-tag">Scheduling</span>
+          <span class="project-tag">Supabase</span>
+        </div>
+      </div>
+
     </div>
   </div>
-</section>
+</div>
 
-<hr class="divider" />
-
-<!-- SKILLS -->
-<section id="skills">
-  <div class="section-label reveal">Skills</div>
-  <h2 class="section-title reveal">What I Build With</h2>
-  <p class="section-sub reveal">Vanilla-first. Framework-aware. Every skill below was earned by shipping something real.</p>
-  <div class="skills-grid">
-    <div class="skill-card reveal">
-      <div class="skill-icon">&#9881;</div>
-      <div class="skill-name">JavaScript</div>
-      <div class="skill-desc">DOM manipulation, async patterns, game logic, data modeling.</div>
-      <div class="skill-bar-wrap"><div class="skill-bar" data-width="92"></div></div>
+<!-- ── STATS BAR ── -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="reveal">
+      <div class="stat-num" data-target="8">0</div>
+      <div class="stat-label">Projects Live</div>
     </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">&#127912;</div>
-      <div class="skill-name">HTML / CSS</div>
-      <div class="skill-desc">Semantic markup, grid/flex layouts, animations, print CSS.</div>
-      <div class="skill-bar-wrap"><div class="skill-bar" data-width="95"></div></div>
+    <div class="reveal">
+      <div class="stat-num" data-target="4">0</div>
+      <div class="stat-label">Lab Chapters</div>
     </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">&#128200;</div>
-      <div class="skill-name">Supabase</div>
-      <div class="skill-desc">Postgres, RLS policies, auth, Edge Functions, real-time.</div>
-      <div class="skill-bar-wrap"><div class="skill-bar" data-width="80"></div></div>
+    <div class="reveal">
+      <div class="stat-num" data-target="52">0</div>
+      <div class="stat-label">Weekly Shows / Year</div>
     </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">&#128196;</div>
-      <div class="skill-name">SQL</div>
-      <div class="skill-desc">Schema design, joins, aggregations, row-level security.</div>
-      <div class="skill-bar-wrap"><div class="skill-bar" data-width="78"></div></div>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">&#128257;</div>
-      <div class="skill-name">GitHub / Pages</div>
-      <div class="skill-desc">Version control, branching, static site deployment.</div>
-      <div class="skill-bar-wrap"><div class="skill-bar" data-width="88"></div></div>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">&#127909;</div>
-      <div class="skill-name">Live Streaming</div>
-      <div class="skill-desc">OBS, scene management, live show production, Newscapes Live!</div>
-      <div class="skill-bar-wrap"><div class="skill-bar" data-width="85"></div></div>
+    <div class="reveal">
+      <div class="stat-num" data-target="100">0</div>
+      <div class="stat-label">% No-Framework</div>
     </div>
   </div>
-</section>
+</div>
 
-<hr class="divider" />
-
-<!-- PROJECTS -->
-<section id="projects">
-  <div class="section-label reveal">Projects</div>
-  <h2 class="section-title reveal">Things I’ve Built</h2>
-  <p class="section-sub reveal">Every project here is live, deployed, and built with real intent — not just portfolio filler.</p>
-  <div class="projects-grid">
-    <a class="project-card reveal" href="https://andredavisme.github.io/internationally-tribal/" target="_blank">
-      <span class="project-tag">Education</span>
-      <div class="project-title">AI Creative Lab</div>
-      <div class="project-desc">A chapter-by-chapter web development curriculum built with AI as co-pilot. Each chapter is a real deployable mini-app.</div>
-      <div class="project-footer">
-        <span class="project-chip">JS</span>
-        <span class="project-chip">CSS</span>
-        <span class="project-chip">GitHub Pages</span>
+<!-- ── PROCESS ── -->
+<div class="section">
+  <div class="section-label reveal">Process</div>
+  <h2 class="section-title reveal">How I <span>Build</span></h2>
+  <div class="process-list">
+    <div class="process-item reveal">
+      <div class="process-num">01</div>
+      <div>
+        <div class="process-title">Whiteboard First</div>
+        <div class="process-desc">Every project starts with a whiteboard and sticky notes — mapping data flows, user interactions, and edge cases before writing a single line of code.</div>
       </div>
-      <div class="project-arrow">&rarr;</div>
-    </a>
-    <a class="project-card reveal" href="https://andredavisme.github.io/newscapes-live/" target="_blank">
-      <span class="project-tag">Live Show</span>
-      <div class="project-title">Newscapes Live!</div>
-      <div class="project-desc">Web app supporting a weekly live show — rundowns, guest management, and real-time show-floor tools.</div>
-      <div class="project-footer">
-        <span class="project-chip">Supabase</span>
-        <span class="project-chip">Real-time</span>
-        <span class="project-chip">OBS</span>
+    </div>
+    <div class="process-item reveal">
+      <div class="process-num">02</div>
+      <div>
+        <div class="process-title">AI as Co-Pilot</div>
+        <div class="process-desc">Use AI to accelerate execution — scaffolding, debugging, edge-case handling — while keeping creative direction and architecture human-owned.</div>
       </div>
-      <div class="project-arrow">&rarr;</div>
-    </a>
-    <a class="project-card reveal" href="https://github.com/andredavisme/chronicle-worlds" target="_blank">
-      <span class="project-tag">Game</span>
-      <div class="project-title">Chronicle Worlds</div>
-      <div class="project-desc">Turn-based multiplayer procedural world simulation — factions, resources, territory, and diplomacy.</div>
-      <div class="project-footer">
-        <span class="project-chip">JavaScript</span>
-        <span class="project-chip">Supabase</span>
-        <span class="project-chip">Procedural</span>
+    </div>
+    <div class="process-item reveal">
+      <div class="process-num">03</div>
+      <div>
+        <div class="process-title">Ship to GitHub Pages</div>
+        <div class="process-desc">Deploy early, iterate in public. No server infrastructure, no overhead — just a live URL and a commit history that tells the story.</div>
       </div>
-      <div class="project-arrow">&rarr;</div>
-    </a>
-    <a class="project-card reveal" href="https://github.com/andredavisme/parts-spec-matcher" target="_blank">
-      <span class="project-tag">Industrial</span>
-      <div class="project-title">Parts Spec Matcher</div>
-      <div class="project-desc">Intelligent matching system for industrial parts specifications — reducing manual lookup time for complex inventory.</div>
-      <div class="project-footer">
-        <span class="project-chip">JavaScript</span>
-        <span class="project-chip">SQL</span>
-        <span class="project-chip">Matching Logic</span>
+    </div>
+    <div class="process-item reveal">
+      <div class="process-num">04</div>
+      <div>
+        <div class="process-title">Stream the Process</div>
+        <div class="process-desc">Take the audience along. Weekly Newscapes Live! shows document the build process — wins, failures, and everything in between.</div>
       </div>
-      <div class="project-arrow">&rarr;</div>
-    </a>
-    <a class="project-card reveal" href="../../hub.html">
-      <span class="project-tag">Chapter 03</span>
-      <div class="project-title">Invoice Generator</div>
-      <div class="project-desc">One-click professional invoice builder with live preview, line items, tax/discount math, and PDF export. No backend.</div>
-      <div class="project-footer">
-        <span class="project-chip">Forms</span>
-        <span class="project-chip">PDF</span>
-        <span class="project-chip">localStorage</span>
-      </div>
-      <div class="project-arrow">&rarr;</div>
-    </a>
-    <a class="project-card reveal" href="../../hub.html">
-      <span class="project-tag">Chapter 02</span>
-      <div class="project-title">Idea Capture Board</div>
-      <div class="project-desc">Free-canvas sticky note board with drag-and-drop, color coding, and full localStorage persistence.</div>
-      <div class="project-footer">
-        <span class="project-chip">Drag &amp; Drop</span>
-        <span class="project-chip">DOM</span>
-        <span class="project-chip">Arrays</span>
-      </div>
-      <div class="project-arrow">&rarr;</div>
-    </a>
+    </div>
   </div>
-</section>
+</div>
 
-<hr class="divider" />
+<hr class="section-divider" />
 
-<!-- CONTACT -->
-<section id="contact">
+<!-- ── CONTACT ── -->
+<div class="section" id="contact">
   <div class="section-label reveal">Contact</div>
-  <h2 class="section-title reveal">Let’s Build Something</h2>
+  <h2 class="section-title reveal">Let's <span>Connect</span></h2>
   <div class="contact-grid">
-    <div class="reveal-left">
-      <div class="contact-info">
-        <h3>Get In Touch</h3>
-        <p>Whether you have a project idea, a collaboration, or just want to talk shop — I’m always open to a conversation.</p>
-        <a class="contact-link" href="mailto:hello@internationallytribal.com">
-          <span class="contact-link-icon">&#9993;</span>
-          hello@internationallytribal.com
-        </a>
-        <a class="contact-link" href="https://github.com/andredavisme" target="_blank">
-          <span class="contact-link-icon">&#128025;</span>
-          github.com/andredavisme
-        </a>
-        <a class="contact-link" href="https://andredavisme.github.io/newscapes-live/" target="_blank">
-          <span class="contact-link-icon">&#127909;</span>
-          Newscapes Live! — Weekly Show
-        </a>
-        <a class="contact-link" href="https://andredavisme.github.io/internationally-tribal/hub.html">
-          <span class="contact-link-icon">&#128218;</span>
-          AI Creative Lab — Chapter Hub
-        </a>
-      </div>
+    <div class="contact-info reveal-left">
+      <p>Have a project idea, a collaboration proposal, or just want to talk shop? Reach out — I read everything.</p>
+      <p>Portland, Maine — but the internet has no zip code.</p>
+      <a href="https://andredavisme.github.io/newscapes-live/" target="_blank" class="contact-link"><span class="icon">&#9654;</span> Watch Newscapes Live!</a>
+      <a href="https://github.com/andredavisme" target="_blank" class="contact-link"><span class="icon">&#128029;</span> github.com/andredavisme</a>
     </div>
-    <div class="reveal-right">
-      <form id="contact-form" onsubmit="handleSubmit(event)">
-        <div class="form-row">
-          <div class="form-group"><label>Name</label><input type="text" placeholder="Your name" required /></div>
-          <div class="form-group"><label>Email</label><input type="email" placeholder="your@email.com" required /></div>
-        </div>
-        <div class="form-group"><label>Subject</label><input type="text" placeholder="What’s this about?" /></div>
-        <div class="form-group"><label>Message</label><textarea placeholder="Tell me about your project or idea…" required></textarea></div>
-        <button type="submit" class="submit-btn">Send Message &rarr;</button>
-        <div id="form-msg">&#10003; Message received — I’ll be in touch soon.</div>
-      </form>
-    </div>
+    <form class="contact-form reveal-right" onsubmit="handleContact(event)">
+      <input type="text" id="c-name" placeholder="Your Name" required />
+      <input type="email" id="c-email" placeholder="Your Email" required />
+      <input type="text" id="c-subject" placeholder="Subject" />
+      <textarea id="c-message" placeholder="Your message..." required></textarea>
+      <button type="submit">Send Message &rarr;</button>
+    </form>
   </div>
-</section>
+</div>
 
 <footer>
-  <div class="footer-copy">&copy; 2026 Andre Davis — Portland, Maine</div>
-  <div class="footer-links">
-    <a href="../../hub.html">AI Creative Lab</a>
-    <a href="activity.html">Activity Guide</a>
-    <a href="https://github.com/andredavisme" target="_blank">GitHub</a>
-  </div>
+  AI Creative Lab &mdash; Chapter 04 &mdash;
+  <a href="https://andredavisme.github.io/internationally-tribal/">Internationally Tribal</a>
+  &mdash; Built with human vision &amp; AI execution.
 </footer>
 
 <div id="toast"></div>
 
 <script>
-  // ── INTERSECTION OBSERVER: scroll reveal ──
-  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+  // ── INTERSECTION OBSERVER REVEAL ──
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
-        // animate skill bars when skill card becomes visible
-        const bar = entry.target.querySelector('.skill-bar');
-        if (bar) {
-          setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 200);
-        }
+        // Animate stat counters when they enter view
+        const num = entry.target.querySelector('[data-target]');
+        if (num) animateCounter(num);
       }
     });
   }, { threshold: 0.12 });
-  revealEls.forEach(el => observer.observe(el));
 
-  // ── CONTACT FORM (client-side only demo) ──
-  function handleSubmit(e) {
-    e.preventDefault();
-    const btn = document.querySelector('.submit-btn');
-    btn.textContent = 'Sending…';
-    btn.disabled = true;
-    setTimeout(() => {
-      document.getElementById('form-msg').style.display = 'block';
-      document.getElementById('contact-form').reset();
-      btn.textContent = 'Send Message →';
-      btn.disabled = false;
-      showToast('\u2705 Message sent!');
-    }, 900);
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+
+  // ── COUNTER ANIMATION ──
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.target, 10);
+    const duration = 1200;
+    const start = performance.now();
+    function step(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      el.textContent = Math.round(ease * target);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
   }
 
-  function showToast(msg, dur = 2800) {
+  // ── CONTACT FORM ──
+  function handleContact(e) {
+    e.preventDefault();
+    const name = document.getElementById('c-name').value.trim();
+    showToast('\u2705 Message received, ' + name + '! (Demo — no server)');
+    e.target.reset();
+  }
+
+  // ── TOAST ──
+  function showToast(msg, dur = 3000) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
