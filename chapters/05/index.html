@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 05 — Meeting Note Taker</title>
+  <style>
+    :root {
+      --black: #111;
+      --red: #e00;
+      --white: #f5f5f5;
+      --gray: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.9rem 1.5rem;
+      border-bottom: 2px solid #1e1e1e;
+      background: #111;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav a { color: var(--red); text-decoration: none; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    nav span { color: #444; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      min-height: calc(100vh - 50px);
+    }
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { border-left: none; border-top: 1px solid #1e1e1e; }
+    }
+
+    /* ── MAIN PANE ── */
+    .main-pane {
+      padding: 2rem 2rem 4rem;
+      border-right: 1px solid #1e1e1e;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* ── MEETING HEADER ── */
+    .meeting-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    @media (max-width: 540px) { .meeting-header { grid-template-columns: 1fr; } }
+    .pane-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--red);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    #autosave-indicator {
+      font-size: 0.65rem;
+      color: #444;
+      letter-spacing: 0.06em;
+      transition: color 0.4s;
+    }
+    #autosave-indicator.saved { color: #3a3; }
+    label {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #555;
+      margin-bottom: 0.3rem;
+    }
+    input, textarea, select {
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.88rem;
+      padding: 0.55rem 0.75rem;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--red); }
+    input::placeholder, textarea::placeholder { color: #333; }
+
+    /* ── NOTE ENTRY ── */
+    .entry-box {
+      background: #141414;
+      border: 1px solid #222;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .entry-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid #1e1e1e;
+      flex-wrap: wrap;
+    }
+    .tag-btn {
+      background: transparent;
+      border: 1px solid #333;
+      color: #666;
+      font-family: inherit;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.25rem 0.65rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .tag-btn:hover, .tag-btn.active {
+      border-color: var(--red);
+      color: var(--white);
+    }
+    .tag-btn[data-tag="action"].active   { background: #e00; border-color: #e00; color: white; }
+    .tag-btn[data-tag="decision"].active { background: #0a6; border-color: #0a6; color: white; }
+    .tag-btn[data-tag="question"].active { background: #06a; border-color: #06a; color: white; }
+    .tag-btn[data-tag="idea"].active     { background: #96a; border-color: #96a; color: white; }
+    .tag-btn[data-tag="note"].active     { background: #555; border-color: #555; color: white; }
+    .entry-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 0.85rem 1rem;
+      resize: none;
+      min-height: 80px;
+      outline: none;
+    }
+    .entry-input::placeholder { color: #2a2a2a; }
+    .entry-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem;
+      border-top: 1px solid #1e1e1e;
+    }
+    .entry-hint { font-size: 0.7rem; color: #333; letter-spacing: 0.04em; }
+    .btn-add {
+      background: var(--red);
+      border: none;
+      color: white;
+      font-family: inherit;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-add:hover { background: #c00; }
+
+    /* ── NOTES LIST ── */
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .note-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.75rem;
+      align-items: flex-start;
+      padding: 0.85rem 1rem;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      transition: border-color 0.2s;
+      animation: slideIn 0.25s ease;
+    }
+    .note-item:hover { border-color: #383838; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .note-tag-pill {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 20px;
+      white-space: nowrap;
+      margin-top: 0.1rem;
+    }
+    .tag-action   { background: #3a0000; color: #f66; border: 1px solid #600; }
+    .tag-decision { background: #003a1a; color: #4d4; border: 1px solid #060; }
+    .tag-question { background: #001a3a; color: #69f; border: 1px solid #006; }
+    .tag-idea     { background: #2a1a3a; color: #c9c; border: 1px solid #636; }
+    .tag-note     { background: #222; color: #888; border: 1px solid #444; }
+    .note-body {
+      flex: 1;
+    }
+    .note-text {
+      font-size: 0.92rem;
+      color: #ddd;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+    .note-time {
+      font-size: 0.68rem;
+      color: #444;
+      margin-top: 0.3rem;
+      letter-spacing: 0.04em;
+    }
+    .note-actions {
+      display: flex;
+      gap: 0.3rem;
+    }
+    .note-btn {
+      background: none;
+      border: 1px solid #2a2a2a;
+      color: #555;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .note-btn:hover { border-color: var(--red); color: var(--red); }
+    .note-item.done .note-text { text-decoration: line-through; color: #444; }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #333;
+      font-size: 0.88rem;
+    }
+    .empty-state .emoji { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      background: #0d0d0d;
+    }
+    .sidebar-section-title {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #444;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid #1e1e1e;
+      padding-bottom: 0.4rem;
+    }
+    .count-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+    .count-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 0.75rem;
+      text-align: center;
+    }
+    .count-num {
+      font-size: 1.5rem;
+      font-weight: bold;
+      line-height: 1;
+    }
+    .count-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #555;
+      margin-top: 0.25rem;
+    }
+    .count-card.action   .count-num { color: #f66; }
+    .count-card.decision .count-num { color: #4d4; }
+    .count-card.question .count-num { color: #69f; }
+    .count-card.idea     .count-num { color: #c9c; }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .filter-btn {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      color: #666;
+      font-family: inherit;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.3rem 0.65rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      border-color: var(--red);
+      color: var(--white);
+    }
+
+    .export-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .btn {
+      background: transparent;
+      border: 1px solid #333;
+      color: #999;
+      font-family: inherit;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 0.55rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      text-align: left;
+    }
+    .btn:hover { border-color: var(--red); color: var(--white); }
+    .btn.danger:hover { border-color: #600; color: #f66; }
+
+    .kbd-list { display: flex; flex-direction: column; gap: 0.4rem; }
+    .kbd-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: #555;
+    }
+    kbd {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 3px;
+      padding: 0.1rem 0.4rem;
+      font-size: 0.72rem;
+      font-family: monospace;
+      color: #888;
+    }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 1.5rem; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1e1e1e; border: 1px solid #333;
+      border-left: 3px solid var(--red);
+      color: #ccc; font-size: 0.82rem;
+      padding: 0.55rem 1.2rem; border-radius: 4px;
+      opacity: 0; transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none; white-space: nowrap; z-index: 9999;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../../hub.html">&larr; All Chapters</a>
+  <span>Ch 05 &mdash; Meeting Note Taker</span>
+  <a href="activity.html">&#128218; Activity Guide</a>
+</nav>
+
+<div class="layout">
+
+  <!-- MAIN -->
+  <div class="main-pane">
+    <div class="pane-title">
+      Meeting Notes
+      <span id="autosave-indicator">&#9679; auto-saved</span>
+    </div>
+
+    <!-- MEETING META -->
+    <div class="meeting-header">
+      <div>
+        <label>Meeting Title</label>
+        <input id="meeting-title" placeholder="Newscapes Live! Pre-Show" oninput="autoSave()" />
+      </div>
+      <div>
+        <label>Date &amp; Time</label>
+        <input id="meeting-date" type="datetime-local" oninput="autoSave()" />
+      </div>
+      <div>
+        <label>Attendees</label>
+        <input id="meeting-attendees" placeholder="Andre, Team" oninput="autoSave()" />
+      </div>
+      <div>
+        <label>Context / Project</label>
+        <input id="meeting-context" placeholder="Episode 42 — Tech Roundup" oninput="autoSave()" />
+      </div>
+    </div>
+
+    <!-- ENTRY BOX -->
+    <div class="entry-box">
+      <div class="entry-toolbar">
+        <span style="font-size:0.68rem;color:#444;text-transform:uppercase;letter-spacing:0.07em;">Tag:</span>
+        <button class="tag-btn active" data-tag="note" onclick="setTag('note')">Note</button>
+        <button class="tag-btn" data-tag="action" onclick="setTag('action')">&#9654; Action</button>
+        <button class="tag-btn" data-tag="decision" onclick="setTag('decision')">&#10003; Decision</button>
+        <button class="tag-btn" data-tag="question" onclick="setTag('question')">? Question</button>
+        <button class="tag-btn" data-tag="idea" onclick="setTag('idea')">&#128161; Idea</button>
+      </div>
+      <textarea class="entry-input" id="entry-input" placeholder="Type a note and press Cmd/Ctrl+Enter to add it..." rows="3"></textarea>
+      <div class="entry-footer">
+        <span class="entry-hint"><kbd>Cmd</kbd>+<kbd>Enter</kbd> to add &nbsp;&bull;&nbsp; <kbd>Esc</kbd> to clear</span>
+        <button class="btn-add" onclick="addNote()">+ Add Note</button>
+      </div>
+    </div>
+
+    <!-- NOTES LIST -->
+    <div class="notes-list" id="notes-list"></div>
+    <div class="empty-state" id="empty-state">
+      <span class="emoji">&#128221;</span>
+      No notes yet. Start typing above.
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div>
+      <div class="sidebar-section-title">Summary</div>
+      <div class="count-grid">
+        <div class="count-card action">
+          <div class="count-num" id="count-action">0</div>
+          <div class="count-label">Actions</div>
+        </div>
+        <div class="count-card decision">
+          <div class="count-num" id="count-decision">0</div>
+          <div class="count-label">Decisions</div>
+        </div>
+        <div class="count-card question">
+          <div class="count-num" id="count-question">0</div>
+          <div class="count-label">Questions</div>
+        </div>
+        <div class="count-card idea">
+          <div class="count-num" id="count-idea">0</div>
+          <div class="count-label">Ideas</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sidebar-section-title">Filter</div>
+      <div class="filter-row">
+        <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+        <button class="filter-btn" data-filter="action" onclick="setFilter('action')">Actions</button>
+        <button class="filter-btn" data-filter="decision" onclick="setFilter('decision')">Decisions</button>
+        <button class="filter-btn" data-filter="question" onclick="setFilter('question')">Questions</button>
+        <button class="filter-btn" data-filter="idea" onclick="setFilter('idea')">Ideas</button>
+        <button class="filter-btn" data-filter="note" onclick="setFilter('note')">Notes</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="sidebar-section-title">Export</div>
+      <div class="export-btns">
+        <button class="btn" onclick="exportTxt()">&#8659; Export as Plain Text (.txt)</button>
+        <button class="btn" onclick="exportMd()">&#8659; Export as Markdown (.md)</button>
+        <button class="btn" onclick="exportActions()">&#8659; Actions Only (.txt)</button>
+        <button class="btn danger" onclick="clearAll()">&#128465; Clear All Notes</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="sidebar-section-title">Keyboard Shortcuts</div>
+      <div class="kbd-list">
+        <div class="kbd-row"><span>Add note</span><div><kbd>Cmd</kbd>+<kbd>Enter</kbd></div></div>
+        <div class="kbd-row"><span>Clear input</span><kbd>Esc</kbd></div>
+        <div class="kbd-row"><span>Tag: Note</span><kbd>Ctrl</kbd>+<kbd>1</kbd></div>
+        <div class="kbd-row"><span>Tag: Action</span><kbd>Ctrl</kbd>+<kbd>2</kbd></div>
+        <div class="kbd-row"><span>Tag: Decision</span><kbd>Ctrl</kbd>+<kbd>3</kbd></div>
+        <div class="kbd-row"><span>Tag: Question</span><kbd>Ctrl</kbd>+<kbd>4</kbd></div>
+        <div class="kbd-row"><span>Tag: Idea</span><kbd>Ctrl</kbd>+<kbd>5</kbd></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  const SAVE_KEY = 'it_ch05_notes';
+  let notes = [];
+  let currentTag = 'note';
+  let currentFilter = 'all';
+  let autoSaveTimer = null;
+
+  // ── TAG SELECTION ──
+  function setTag(tag) {
+    currentTag = tag;
+    document.querySelectorAll('.tag-btn').forEach(b => b.classList.toggle('active', b.dataset.tag === tag));
+    document.getElementById('entry-input').focus();
+  }
+
+  // ── ADD NOTE ──
+  function addNote() {
+    const text = document.getElementById('entry-input').value.trim();
+    if (!text) return;
+    const note = {
+      id: Date.now().toString(),
+      tag: currentTag,
+      text,
+      time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      ts: Date.now(),
+      done: false
+    };
+    notes.push(note);
+    document.getElementById('entry-input').value = '';
+    renderNotes();
+    saveData();
+    showToast('Note added');
+  }
+
+  // ── RENDER NOTES ──
+  function renderNotes() {
+    const list = document.getElementById('notes-list');
+    const empty = document.getElementById('empty-state');
+    const visible = notes.filter(n => currentFilter === 'all' || n.tag === currentFilter);
+
+    // Update counts
+    ['action','decision','question','idea'].forEach(tag => {
+      document.getElementById('count-' + tag).textContent = notes.filter(n => n.tag === tag).length;
+    });
+
+    if (visible.length === 0) {
+      list.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    list.innerHTML = visible.slice().reverse().map(n => `
+      <div class="note-item${n.done ? ' done' : ''}" id="note-${n.id}">
+        <span class="note-tag-pill tag-${n.tag}">${tagLabel(n.tag)}</span>
+        <div class="note-body">
+          <div class="note-text" contenteditable="true"
+            onblur="updateText('${n.id}', this.textContent)"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();this.blur();}">${escHtml(n.text)}</div>
+          <div class="note-time">${n.time}</div>
+        </div>
+        <div class="note-actions">
+          ${n.tag === 'action' ? `<button class="note-btn" title="Toggle done" onclick="toggleDone('${n.id}')">${n.done ? '&#8635;' : '&#10003;'}</button>` : ''}
+          <button class="note-btn" title="Delete" onclick="deleteNote('${n.id}')">&times;</button>
+        </div>
+      </div>`).join('');
+  }
+
+  function tagLabel(tag) {
+    return { note: 'Note', action: '▶ Action', decision: '✓ Decision', question: '? Question', idea: '💡 Idea' }[tag] || tag;
+  }
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── CRUD ──
+  function deleteNote(id) {
+    notes = notes.filter(n => n.id !== id);
+    renderNotes();
+    saveData();
+  }
+  function toggleDone(id) {
+    const n = notes.find(n => n.id === id);
+    if (n) { n.done = !n.done; renderNotes(); saveData(); }
+  }
+  function updateText(id, text) {
+    const n = notes.find(n => n.id === id);
+    if (n) { n.text = text.trim(); saveData(); }
+  }
+  function setFilter(f) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+    renderNotes();
+  }
+
+  // ── EXPORT ──
+  function buildHeader() {
+    const title = document.getElementById('meeting-title').value || 'Meeting Notes';
+    const date  = document.getElementById('meeting-date').value || new Date().toLocaleString();
+    const att   = document.getElementById('meeting-attendees').value;
+    const ctx   = document.getElementById('meeting-context').value;
+    return { title, date, att, ctx };
+  }
+
+  function exportTxt() {
+    if (!notes.length) { showToast('No notes to export'); return; }
+    const h = buildHeader();
+    const lines = [
+      h.title,
+      '='.repeat(h.title.length),
+      `Date: ${h.date}`,
+      h.att  ? `Attendees: ${h.att}` : '',
+      h.ctx  ? `Context: ${h.ctx}` : '',
+      '',
+      ...notes.map(n => `[${n.time}] [${n.tag.toUpperCase()}] ${n.text}${n.done ? ' (done)' : ''}`),
+      '',
+      `--- Exported ${new Date().toLocaleString()} ---`
+    ].filter(l => l !== undefined);
+    download(lines.join('\n'), sanitizeFilename(h.title) + '.txt', 'text/plain');
+    showToast('Exported as .txt');
+  }
+
+  function exportMd() {
+    if (!notes.length) { showToast('No notes to export'); return; }
+    const h = buildHeader();
+    const sections = ['action','decision','question','idea','note'];
+    const sectionNames = { action: '## ▶ Action Items', decision: '## ✓ Decisions', question: '## ? Questions', idea: '## 💡 Ideas', note: '## Notes' };
+    let md = `# ${h.title}\n\n`;
+    if (h.date) md += `**Date:** ${h.date}  \n`;
+    if (h.att)  md += `**Attendees:** ${h.att}  \n`;
+    if (h.ctx)  md += `**Context:** ${h.ctx}  \n`;
+    md += '\n---\n\n';
+    sections.forEach(tag => {
+      const tagged = notes.filter(n => n.tag === tag);
+      if (!tagged.length) return;
+      md += sectionNames[tag] + '\n\n';
+      tagged.forEach(n => {
+        const check = tag === 'action' ? (n.done ? '- [x]' : '- [ ]') : '-';
+        md += `${check} **[${n.time}]** ${n.text}\n`;
+      });
+      md += '\n';
+    });
+    md += `\n---\n*Exported ${new Date().toLocaleString()}*`;
+    download(md, sanitizeFilename(h.title) + '.md', 'text/markdown');
+    showToast('Exported as .md');
+  }
+
+  function exportActions() {
+    const actions = notes.filter(n => n.tag === 'action');
+    if (!actions.length) { showToast('No action items'); return; }
+    const h = buildHeader();
+    const lines = [
+      `ACTION ITEMS — ${h.title}`,
+      `Date: ${h.date}`,
+      '',
+      ...actions.map((n, i) => `${i + 1}. [${n.done ? 'DONE' : 'OPEN'}] ${n.text}`),
+      '',
+      `Generated ${new Date().toLocaleString()}`
+    ];
+    download(lines.join('\n'), sanitizeFilename(h.title) + '-actions.txt', 'text/plain');
+    showToast('Actions exported');
+  }
+
+  function download(content, filename, type) {
+    const blob = new Blob([content], { type });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function sanitizeFilename(s) {
+    return (s || 'notes').replace(/[^a-z0-9\-_\s]/gi, '').replace(/\s+/g, '-').toLowerCase();
+  }
+
+  function clearAll() {
+    if (!notes.length) { showToast('Nothing to clear'); return; }
+    if (!confirm('Clear all notes for this session?')) return;
+    notes = [];
+    renderNotes();
+    saveData();
+    showToast('Notes cleared');
+  }
+
+  // ── PERSIST ──
+  function saveData() {
+    const data = {
+      title:     document.getElementById('meeting-title').value,
+      date:      document.getElementById('meeting-date').value,
+      attendees: document.getElementById('meeting-attendees').value,
+      context:   document.getElementById('meeting-context').value,
+      notes
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+    const ind = document.getElementById('autosave-indicator');
+    ind.classList.add('saved');
+    setTimeout(() => ind.classList.remove('saved'), 1500);
+  }
+
+  function autoSave() {
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(saveData, 800);
+  }
+
+  function loadData() {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) {
+      try {
+        const d = JSON.parse(raw);
+        document.getElementById('meeting-title').value     = d.title     || '';
+        document.getElementById('meeting-date').value      = d.date      || '';
+        document.getElementById('meeting-attendees').value = d.attendees || '';
+        document.getElementById('meeting-context').value   = d.context   || '';
+        notes = d.notes || [];
+        renderNotes();
+        return;
+      } catch(e) {}
+    }
+    loadDefaults();
+  }
+
+  function loadDefaults() {
+    document.getElementById('meeting-title').value     = 'Newscapes Live! Pre-Show';
+    document.getElementById('meeting-attendees').value = 'Andre';
+    document.getElementById('meeting-context').value   = 'Episode 42 — Tech Roundup';
+    const now = new Date();
+    now.setSeconds(0, 0);
+    document.getElementById('meeting-date').value = now.toISOString().slice(0, 16);
+    notes = [
+      { id: 'd1', tag: 'action',   text: 'Pull latest AI news clips for the segment intro', time: '09:02', ts: 1, done: false },
+      { id: 'd2', tag: 'decision', text: 'Lead with the open-source story — strongest hook', time: '09:04', ts: 2, done: false },
+      { id: 'd3', tag: 'note',     text: 'Bumper music finalized — use track 3 from last week', time: '09:05', ts: 3, done: false },
+      { id: 'd4', tag: 'question', text: 'Does the Supabase segment run before or after break?', time: '09:07', ts: 4, done: false },
+      { id: 'd5', tag: 'action',   text: 'Update the show thumbnail before 6pm', time: '09:08', ts: 5, done: false },
+      { id: 'd6', tag: 'idea',     text: 'Live coding segment — build a mini app on stream in 10 min', time: '09:10', ts: 6, done: false },
+      { id: 'd7', tag: 'decision', text: 'Chapter 05 demo will be shown at top of hour', time: '09:12', ts: 7, done: false },
+      { id: 'd8', tag: 'action',   text: 'Test OBS scene transitions before going live', time: '09:14', ts: 8, done: false }
+    ];
+    renderNotes();
+  }
+
+  // ── KEYBOARD SHORTCUTS ──
+  document.addEventListener('keydown', e => {
+    const input = document.getElementById('entry-input');
+    // Cmd/Ctrl + Enter = add note
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      addNote();
+    }
+    // Esc = clear input
+    if (e.key === 'Escape' && document.activeElement === input) {
+      input.value = '';
+    }
+    // Ctrl + 1-5 = set tag
+    if (e.ctrlKey && !e.metaKey) {
+      const tagMap = { '1': 'note', '2': 'action', '3': 'decision', '4': 'question', '5': 'idea' };
+      if (tagMap[e.key]) { e.preventDefault(); setTag(tagMap[e.key]); }
+    }
+  });
+
+  // ── TOAST ──
+  function showToast(msg, dur = 2200) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+
+  loadData();
+</script>
+
+</body>
+</html>

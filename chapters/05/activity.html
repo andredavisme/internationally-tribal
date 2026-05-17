@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 05 Activity — Meeting Note Taker</title>
+  <style>
+    :root { --black: #111; --red: #e00; --white: #f5f5f5; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--black); color: var(--white); line-height: 1.7; }
+    header { background: var(--black); border-bottom: 4px solid var(--red); padding: 3rem 2rem 2rem; text-align: center; }
+    header .chapter-tag { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--red); margin-bottom: .75rem; }
+    header h1 { font-size: clamp(1.8rem,5vw,3rem); letter-spacing: .04em; text-transform: uppercase; }
+    header h1 span { color: var(--red); }
+    header p { margin-top: .75rem; font-size: 1.05rem; color: #888; max-width: 600px; margin-inline: auto; }
+    .header-links { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+    .header-links a { color: var(--red); font-size: .8rem; text-transform: uppercase; letter-spacing: .07em; text-decoration: none; border: 1px solid var(--red); padding: .4rem 1rem; border-radius: 3px; transition: background .2s, color .2s; }
+    .header-links a:hover { background: var(--red); color: white; }
+    main { max-width: 860px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+    section { margin-bottom: 3.5rem; }
+    h2 { font-size: 1.3rem; text-transform: uppercase; letter-spacing: .08em; color: var(--red); border-left: 5px solid var(--red); padding-left: .75rem; margin-bottom: 1rem; }
+    h3 { font-size: 1.05rem; color: #ccc; margin: 1.5rem 0 .5rem; }
+    p { margin-bottom: 1rem; color: #bbb; }
+    ul, ol { padding-left: 1.5rem; color: #999; margin-bottom: 1rem; }
+    li { margin-bottom: .5rem; }
+    a { color: var(--red); }
+    .callout { background: #1a1a1a; border-left: 4px solid var(--red); padding: 1.25rem 1.5rem; border-radius: 4px; margin: 1.5rem 0; }
+    .callout p { margin: 0; }
+    .callout strong { color: var(--white); }
+    .step { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.5rem; margin-bottom: 1.25rem; }
+    .step-num { display: inline-block; background: var(--red); color: white; font-weight: bold; font-size: .8rem; padding: .2rem .6rem; border-radius: 3px; margin-bottom: .6rem; letter-spacing: .05em; text-transform: uppercase; }
+    .step h3 { margin-top: 0; color: white; }
+    code { background: #222; color: #f88; padding: .15em .4em; border-radius: 3px; font-size: .9em; }
+    pre { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.25rem; overflow-x: auto; margin: 1rem 0; }
+    pre code { background: none; color: #f88; padding: 0; font-size: .88rem; line-height: 1.6; }
+    .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+    @media (max-width:540px) { .concept-grid { grid-template-columns: 1fr; } }
+    .concept-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.25rem; }
+    .concept-card h4 { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--red); margin-bottom: .5rem; }
+    .concept-card p { color: #888; font-size: .88rem; margin: 0; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+    .tag { background: #1e1e1e; border: 1px solid #333; color: #777; font-size: .75rem; padding: .25rem .65rem; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; }
+    .big-quote { font-size: clamp(1.1rem,3vw,1.6rem); font-style: italic; color: var(--white); text-align: center; padding: 2rem 1rem; border-top: 1px solid #222; border-bottom: 1px solid #222; margin: 2rem 0; line-height: 1.5; }
+    .big-quote span { color: var(--red); }
+    .reflection { background: #111; border: 2px dashed #333; border-radius: 6px; padding: 1.5rem; margin-top: 1rem; }
+    .reflection p { color: #666; font-style: italic; }
+    .reflection ol { color: #666; }
+    .extend-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 1rem; margin-top: 1rem; }
+    .extend-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1.25rem; }
+    .extend-card h4 { color: white; font-size: .95rem; margin-bottom: .4rem; }
+    .extend-card p { font-size: .85rem; color: #666; margin: 0; }
+    .up-next { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 2rem; margin-top: 3rem; display: flex; flex-direction: column; align-items: flex-start; gap: .75rem; }
+    .up-next-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--red); }
+    .up-next h3 { color: white; font-size: 1.2rem; margin: 0; }
+    .up-next p { color: #777; font-size: .88rem; margin: 0; }
+    .up-next a { display: inline-block; background: transparent; border: 1px solid var(--red); color: var(--red); font-size: .82rem; text-transform: uppercase; letter-spacing: .07em; text-decoration: none; padding: .5rem 1.25rem; border-radius: 4px; margin-top: .25rem; transition: background .2s, color .2s; }
+    .up-next a:hover { background: var(--red); color: white; }
+    footer { text-align: center; padding: 2rem; color: #444; font-size: .8rem; border-top: 1px solid #1e1e1e; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="chapter-tag">Chapter 05 — Activity Guide</div>
+  <h1>Build a <span>Meeting Note Taker</span></h1>
+  <p>Learn keyboard shortcuts, the File Download API, and structured data tagging — while building a real tool you'll use every time you plan a show, meeting, or project.</p>
+  <div class="header-links">
+    <a href="index.html">&#9654; Open the Note Taker</a>
+    <a href="../../hub.html">&larr; All Chapters</a>
+    <a href="../04/activity.html">Chapter 04</a>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <h2>Why This Project?</h2>
+    <p>Every chapter so far has stored data in the browser. This chapter introduces a new idea: <em>getting data out</em>. The File Download API lets you create a file on the fly from a JavaScript string and trigger a browser download — no server, no file system access, no libraries. Just a Blob, a URL, and an anchor click.</p>
+    <p>The note taker also introduces keyboard shortcuts via <code>addEventListener('keydown')</code>, structured tagging as a data design pattern, and <code>contenteditable</code> for inline text editing — three patterns that show up in nearly every real productivity tool.</p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h4>File Download API</h4>
+        <p>Create a <code>Blob</code> from a string, wrap it in a temporary object URL with <code>URL.createObjectURL()</code>, attach it to a hidden <code>&lt;a&gt;</code> tag, click it programmatically, then revoke the URL. That's a download with no server.</p>
+      </div>
+      <div class="concept-card">
+        <h4>keydown Events</h4>
+        <p><code>document.addEventListener('keydown', e =&gt; {...})</code> intercepts every keystroke. Check <code>e.key</code>, <code>e.metaKey</code>, <code>e.ctrlKey</code> to build keyboard shortcuts that work alongside the UI buttons.</p>
+      </div>
+      <div class="concept-card">
+        <h4>Structured Tagging</h4>
+        <p>Each note has a <code>tag</code> field (action / decision / question / idea / note). This turns a flat list into a filterable, exportable structured dataset — without a database.</p>
+      </div>
+      <div class="concept-card">
+        <h4>contenteditable</h4>
+        <p>Add <code>contenteditable="true"</code> to any element to make it inline-editable. Capture the new value on <code>blur</code> or <code>keydown Enter</code> and write it back to your data array.</p>
+      </div>
+    </div>
+
+    <div class="tag-row">
+      <span class="tag">File Download API</span>
+      <span class="tag">Blob + Object URL</span>
+      <span class="tag">keydown Events</span>
+      <span class="tag">contenteditable</span>
+      <span class="tag">Structured Data</span>
+      <span class="tag">localStorage</span>
+      <span class="tag">Markdown</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>The AI Angle for This Chapter</h2>
+    <p>This chapter has multiple export formats. That's a good AI challenge — generating three different string formats (plain text, Markdown, actions-only) from the same underlying data array. The key skill is telling AI exactly what structure the output should follow, not just "export the notes."</p>
+
+    <div class="callout">
+      <p><strong>Format specs beat vague requests.</strong> Instead of "export as Markdown," prompt: "Group notes by tag. For each group, write an H2 header, then a bullet list. Action items use GitHub-style checkboxes. Include timestamp in bold before each note text." That's a spec — and AI can execute a spec precisely.</p>
+    </div>
+
+    <div class="big-quote">
+      &ldquo;Exporting data is just
+      <span>building a string with rules.</span>&rdquo;
+    </div>
+
+    <p>Before writing any export function, write out the exact output format you want by hand. Paste one real example note through the format and show AI what the output should look like. It will get it right on the first pass.</p>
+  </section>
+
+  <section>
+    <h2>Before You Build — Map the Data</h2>
+    <p>This app's core is a single array of note objects. Design the data structure before touching the UI:</p>
+    <div class="reflection">
+      <ol>
+        <li>What fields does a note need? At minimum: id, text, tag, and timestamp. What else might be useful at export time?</li>
+        <li>Where does the tag live — in the note object or in the DOM element? What happens if you only store it in the DOM?</li>
+        <li>How will you handle inline editing? When the user clicks a note and edits it, where does that change get written?</li>
+        <li>The filter only affects what's <em>displayed</em> — not what's stored. How do you make sure filtering never deletes data?</li>
+        <li>Design the Markdown export format on paper first. What should an actions section look like vs. a decisions section?</li>
+      </ol>
+      <p style="margin-top:1rem;">Good data design makes every feature easier. If your note object has all the fields it will ever need from the start, none of your export or filter functions require workarounds.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Build It</h2>
+
+    <div class="step">
+      <span class="step-num">Phase 1</span>
+      <h3>Scaffold the two-pane layout and note entry box</h3>
+      <p>The layout is a wide main pane (note entry + list) and a narrow sidebar (summary counts, filter, export, shortcuts). The entry box has a tag toolbar above the textarea and an Add button below.</p>
+      <pre><code>Build a two-column layout: main pane (flexible) and sidebar (340px).
+Main pane contains:
+- A meeting meta section: title, date/time, attendees, context inputs
+- An entry box: tag buttons toolbar (Note/Action/Decision/Question/Idea),
+  a textarea for note text, a footer with keyboard hint and Add button
+- An empty notes list div
+Sidebar contains: summary count cards (Actions/Decisions/Questions/Ideas),
+filter buttons, export buttons, keyboard shortcut reference.
+Color palette: #111 background, #e00 red, tag colors coded by type.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 2</span>
+      <h3>Build the note data model and render function</h3>
+      <p>Notes live in a JS array. Each has: id (Date.now()), tag, text, time (formatted HH:MM), ts (raw timestamp), done (bool). The render function rebuilds the entire list from the array — newest first — and updates the sidebar count badges.</p>
+      <pre><code>Write addNote() that:
+1. Reads the textarea value and current selected tag
+2. Creates a note object: { id, tag, text, time, ts, done: false }
+3. Pushes it to the notes array
+4. Clears the textarea and calls renderNotes()
+
+Write renderNotes() that:
+1. Filters notes by currentFilter ('all' or a tag name)
+2. Reverses the visible array (newest first)
+3. Builds HTML for each note: tag pill, editable text, timestamp, delete button
+4. Action items also get a toggle-done checkbox button
+5. Updates count badges in the sidebar for each tag type</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 3</span>
+      <h3>Add keyboard shortcuts</h3>
+      <p>Wire up <code>document.addEventListener('keydown')</code> for: Cmd/Ctrl+Enter to submit the note, Escape to clear the textarea, and Ctrl+1 through Ctrl+5 to switch the active tag without touching the mouse.</p>
+      <pre><code>Add a single keydown listener on document:
+- (e.metaKey || e.ctrlKey) && e.key === 'Enter' → call addNote()
+- e.key === 'Escape' && activeElement is textarea → clear textarea
+- e.ctrlKey && e.key === '1' → setTag('note')
+- e.ctrlKey && e.key === '2' → setTag('action')
+- e.ctrlKey && e.key === '3' → setTag('decision')
+- e.ctrlKey && e.key === '4' → setTag('question')
+- e.ctrlKey && e.key === '5' → setTag('idea')
+Use e.preventDefault() on shortcuts that conflict with browser defaults.</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 4</span>
+      <h3>Build the File Download API exports</h3>
+      <p>Three export functions — plain text, Markdown, and actions-only — each builds a string from the notes array, wraps it in a Blob, creates a temporary object URL, clicks a hidden anchor, and revokes the URL. No server, no file system permissions.</p>
+      <pre><code>Write exportMd() that:
+1. Builds a Markdown string grouping notes by tag
+2. Each group has an H2 header and a bullet list
+3. Action items use GitHub checkbox syntax: - [ ] or - [x]
+4. Each bullet includes timestamp in bold: **[09:02]** Note text
+5. Adds meeting metadata (title, date, attendees) at the top
+
+For the download itself:
+const blob = new Blob([content], { type: 'text/markdown' });
+const url  = URL.createObjectURL(blob);
+const a    = document.createElement('a');
+a.href = url; a.download = 'meeting-notes.md';
+a.click();
+URL.revokeObjectURL(url);</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="step-num">Phase 5</span>
+      <h3>Add localStorage persistence and inline editing</h3>
+      <p>Save the entire state (notes array + meeting metadata) to localStorage on every change. On load, restore from storage or load demo defaults. Add <code>contenteditable</code> to note text elements so users can click and edit directly in the list.</p>
+      <pre><code>Add saveData() that JSON.stringifies { title, date, attendees,
+context, notes } into localStorage under key 'it_ch05_notes'.
+Call saveData() after every add, delete, toggle, and text edit.
+
+For inline editing:
+&lt;div contenteditable="true"
+  onblur="updateText(id, this.textContent)"
+  onkeydown="if(event.key==='Enter'&&!event.shiftKey){
+    event.preventDefault(); this.blur(); }"&gt;
+
+The blur fires updateText(id, newText) which finds the note
+in the array by id, updates note.text, and calls saveData().</code></pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>Concepts You Just Used</h2>
+    <ul>
+      <li><code>new Blob([string], { type })</code> — create an in-memory file from any string</li>
+      <li><code>URL.createObjectURL(blob)</code> — generate a temporary browser URL pointing to that blob</li>
+      <li><code>URL.revokeObjectURL(url)</code> — release the memory after the download fires</li>
+      <li><code>document.addEventListener('keydown', e => {...})</code> — intercept all keyboard input globally</li>
+      <li><code>e.metaKey</code> / <code>e.ctrlKey</code> / <code>e.key</code> — identify modifier keys and the specific key pressed</li>
+      <li><code>contenteditable="true"</code> — make any DOM element inline-editable by the user</li>
+      <li><code>onblur</code> — fire when focus leaves an element; the right moment to capture edits</li>
+      <li>Structured tagging — storing a <code>tag</code> field on each data object enables filtering, grouping, and format-specific export without extra state</li>
+    </ul>
+
+    <div class="callout">
+      <p><strong>The Blob download pattern is a superpower.</strong> Once you know it, you can export anything from a browser app — CSV, JSON, SVG, Markdown, plain text — without ever touching a server. It's the same technique behind "Export" buttons in Notion, Figma, and Airtable.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Reflect</h2>
+    <div class="reflection">
+      <ol>
+        <li>What's the difference between <code>URL.createObjectURL()</code> and a <code>data:</code> URI? When would you use each?</li>
+        <li>Why do you call <code>URL.revokeObjectURL()</code> after the download? What happens if you don't?</li>
+        <li>The filter only hides notes — it doesn't delete them. How is that different from how most filtering systems work in databases vs. in-browser?</li>
+        <li>Inline editing with <code>contenteditable</code> is powerful but has quirks. What happens if the user pastes rich text (bold, links) into an editable div? How would you prevent that?</li>
+        <li>This app stores one meeting at a time. What would the data model look like if it stored a history of multiple meetings?</li>
+      </ol>
+      <p style="margin-top:1rem;">The tools you used here — Blob, Object URL, keydown, contenteditable — are the building blocks behind every browser-based productivity app. You didn't use a library. You used the platform.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Go Further</h2>
+    <div class="extend-grid">
+      <div class="extend-card">
+        <h4>&#128196; Meeting History</h4>
+        <p>Store multiple meetings in localStorage as an array keyed by date. Add a "Past Meetings" sidebar panel to browse and reload previous sessions.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128269; Search</h4>
+        <p>Add a search input that filters the visible notes in real time by matching the note text. Highlight the matched substring in the result.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128203; Copy to Clipboard</h4>
+        <p>Add a "Copy as Markdown" button using <code>navigator.clipboard.writeText()</code> — no file download, just straight to the clipboard for pasting into Slack or Notion.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128336; Meeting Timer</h4>
+        <p>Add a running elapsed-time counter that starts when the page loads and is stamped into the export header. Bonus: add a "time per section" marker.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128101; Attendee Tracker</h4>
+        <p>Parse the attendees field into a list. Let each note be assigned to a specific attendee. Filter by person and export an individual action list per attendee.</p>
+      </div>
+      <div class="extend-card">
+        <h4>&#128228; Export to Email Draft</h4>
+        <p>Build the export string and open a <code>mailto:</code> link with the meeting summary in the body — pre-addressed to the attendees field.</p>
+      </div>
+    </div>
+
+    <div class="up-next">
+      <span class="up-next-label">Up Next — Chapter 06</span>
+      <h3>Brand Palette Generator</h3>
+      <p>Pick a base color, generate a full brand palette with tints, shades, and complementary colors, and export as CSS variables or a swatch sheet. You'll learn color math, HSL manipulation, and dynamic CSS generation.</p>
+      <a href="../../hub.html">Start Chapter 06 &rarr;</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>AI Creative Lab — Chapter 05 Activity — Internationally Tribal</footer>
+
+</body>
+</html>
