@@ -35,22 +35,23 @@
   <circle cx="250" cy="250" r="210" fill="black" />
 
   <!-- White tilted square background -->
-  <rect id="square" x="105" y="115" width="290" height="275" rx="4"
+  <rect id="square" x="95" y="110" width="310" height="285" rx="4"
     fill="white" transform="rotate(-4, 250, 250)" />
 
-  <!-- RED SHAPE: I vertical blade -->
+  <!-- RED SHAPE: I — pointed top and bottom, spaced left -->
+  <!-- 6-point shape: pointed tip top, wide middle, pointed tip bottom -->
   <polygon id="blade-i"
-    points="195,140 225,140 225,380 195,380"
+    points="172,128 188,145 188,365 172,382 156,365 156,145"
     fill="red" />
 
-  <!-- RED SHAPE: T crossbar -->
+  <!-- RED SHAPE: T crossbar — pointed left and right tips -->
   <polygon id="crossbar-t"
-    points="170,140 340,140 340,175 170,175"
+    points="210,128 388,128 400,152 388,175 210,175 198,152"
     fill="red" />
 
-  <!-- RED SHAPE: T stem (parallel sides) -->
+  <!-- RED SHAPE: T stem — pointed bottom tip, parallel sides -->
   <polygon id="stem-t"
-    points="225,175 275,175 275,380 225,380"
+    points="285,175 325,175 325,365 305,385 285,365"
     fill="red" />
 
   <!-- Pyramid triangle (universal symbol) -->
@@ -71,19 +72,9 @@
   </g>
 
   <!-- FACE ELEMENTS (hidden initially) -->
-  <!-- Left eye: sharp diamond -->
-  <polygon id="eye-left"
-    points="195,210 195,210 195,210 195,210"
-    fill="red" />
-  <!-- Right eye: sharp diamond -->
-  <polygon id="eye-right"
-    points="305,210 305,210 305,210 305,210"
-    fill="red" />
-  <!-- Nose: tall sharp triangle -->
-  <polygon id="nose"
-    points="250,250 250,250 250,250"
-    fill="red" />
-  <!-- Mouth: jagged lightning bolt line -->
+  <polygon id="eye-left"  points="195,210 195,210 195,210 195,210" fill="red" />
+  <polygon id="eye-right" points="305,210 305,210 305,210 305,210" fill="red" />
+  <polygon id="nose"      points="250,250 250,250 250,250"          fill="red" />
   <polyline id="mouth"
     points="200,340 200,340"
     fill="none" stroke="red" stroke-width="0" stroke-linejoin="miter" stroke-linecap="square" />
@@ -98,49 +89,49 @@ window.addEventListener('load', () => {
 
     const tl = anime.timeline({ easing: 'easeInOutQuart' });
 
-    // Step 1: I blade → sharp angled left brow (slashes down-right like a blade)
+    // I blade -> sharp angled left brow
     tl.add({
       targets: '#blade-i',
-      points: [{ value: '155,165 230,155 238,188 163,198' }],
+      points: [{ value: '155,165 230,155 238,188 163,198 155,182' }],
       duration: 800
     })
 
-    // Step 2: T crossbar → sharp angled right brow (mirror slash)
+    // T crossbar -> sharp angled right brow
     .add({
       targets: '#crossbar-t',
-      points: [{ value: '262,155 345,165 337,198 254,188' }],
+      points: [{ value: '262,155 345,165 337,182 337,198 254,188' }],
       duration: 800
     }, '-=600')
 
-    // Step 3: T stem → sharp narrow nose ridge, pointed tip
+    // T stem -> sharp narrow nose ridge
     .add({
       targets: '#stem-t',
-      points: [{ value: '242,195 258,195 252,320 248,320' }],
+      points: [{ value: '242,195 258,195 252,320 248,320 244,300' }],
       duration: 900
     }, '-=400')
 
-    // Step 4: Left eye → sharp horizontal diamond
+    // Left eye diamond
     .add({
       targets: '#eye-left',
       points: [{ value: '163,215 195,205 227,215 195,225' }],
       duration: 600
     }, '-=300')
 
-    // Step 5: Right eye → sharp horizontal diamond (mirror)
+    // Right eye diamond
     .add({
       targets: '#eye-right',
       points: [{ value: '273,215 305,205 337,215 305,225' }],
       duration: 600
     }, '-=600')
 
-    // Step 6: Nose → tall sharp downward triangle
+    // Nose sharp triangle
     .add({
       targets: '#nose',
       points: [{ value: '242,265 258,265 252,318' }],
       duration: 500
     }, '-=200')
 
-    // Step 7: Mouth → sharp zigzag / tribal snarl
+    // Mouth zigzag snarl
     .add({
       targets: '#mouth',
       strokeWidth: 7,
@@ -148,7 +139,7 @@ window.addEventListener('load', () => {
       duration: 700
     }, '-=200')
 
-    // Step 8: Pyramid → sharper chin spike
+    // Pyramid chin spike
     .add({
       targets: '#pyramid',
       points: [{ value: '250,362 200,448 300,448' }],
@@ -158,24 +149,19 @@ window.addEventListener('load', () => {
     // HOLD on face
     .add({ targets: 'svg', opacity: 1, duration: 1400 })
 
-    // ---- REVERSE SEQUENCE ----
+    // ---- REVERSE ----
 
-    // Pyramid back
     .add({
       targets: '#pyramid',
       points: [{ value: '250,395 220,435 280,435' }],
       duration: 600
     })
-
-    // Mouth disappears
     .add({
       targets: '#mouth',
       strokeWidth: 0,
       points: [{ value: '200,340 200,340 200,340 200,340 200,340 200,340 200,340' }],
       duration: 500
     }, '-=300')
-
-    // Eyes shrink back to points
     .add({
       targets: '#eye-left',
       points: [{ value: '195,210 195,210 195,210 195,210' }],
@@ -186,32 +172,24 @@ window.addEventListener('load', () => {
       points: [{ value: '305,210 305,210 305,210 305,210' }],
       duration: 500
     }, '-=500')
-
-    // Nose back
     .add({
       targets: '#nose',
       points: [{ value: '250,250 250,250 250,250' }],
       duration: 400
     }, '-=200')
-
-    // T stem back
     .add({
       targets: '#stem-t',
-      points: [{ value: '225,175 275,175 275,380 225,380' }],
+      points: [{ value: '285,175 325,175 325,365 305,385 285,365' }],
       duration: 900
     }, '-=200')
-
-    // T crossbar back
     .add({
       targets: '#crossbar-t',
-      points: [{ value: '170,140 340,140 340,175 170,175' }],
+      points: [{ value: '210,128 388,128 400,152 388,175 210,175 198,152' }],
       duration: 800
     }, '-=500')
-
-    // I blade back
     .add({
       targets: '#blade-i',
-      points: [{ value: '195,140 225,140 225,380 195,380' }],
+      points: [{ value: '172,128 188,145 188,365 172,382 156,365 156,145' }],
       duration: 800
     }, '-=600');
 
