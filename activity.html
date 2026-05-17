@@ -20,6 +20,34 @@
       color: var(--white);
       line-height: 1.7;
     }
+    nav {
+      position: sticky;
+      top: 0;
+      background: #111;
+      border-bottom: 2px solid #1e1e1e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 1.5rem;
+      z-index: 10;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    nav a {
+      color: var(--red);
+      text-decoration: none;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: 1px solid transparent;
+      padding: 0.3rem 0.75rem;
+      border-radius: 3px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    nav a:hover { border-color: var(--red); }
+    nav a.highlight { border-color: var(--red); }
+    nav a.highlight:hover { background: var(--red); color: white; }
+    nav .nav-label { color: #444; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; }
     header {
       background: var(--black);
       border-bottom: 4px solid var(--red);
@@ -154,6 +182,51 @@
       line-height: 1.5;
     }
     .big-quote span { color: var(--red); }
+    /* Next chapter CTA */
+    .next-chapter {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-left: 4px solid var(--red);
+      border-radius: 6px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+    .next-chapter div { flex: 1; }
+    .next-chapter .nc-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--red);
+      margin-bottom: 0.3rem;
+    }
+    .next-chapter .nc-title {
+      font-size: 1.1rem;
+      color: var(--white);
+      font-weight: bold;
+    }
+    .next-chapter .nc-desc {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.25rem;
+    }
+    .next-chapter a {
+      background: var(--red);
+      color: white;
+      text-decoration: none;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 0.6rem 1.2rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .next-chapter a:hover { opacity: 0.85; }
     footer {
       text-align: center;
       padding: 2rem;
@@ -165,6 +238,12 @@
   </style>
 </head>
 <body>
+
+<nav>
+  <a href="hub.html">&larr; All Chapters</a>
+  <span class="nav-label">Chapter 00 — Activity Guide</span>
+  <a href="chapters/01/activity.html" class="highlight">Chapter 01 →</a>
+</nav>
 
 <header>
   <h1>AI is a <span>Tool</span>, Not the Artist</h1>
@@ -372,6 +451,16 @@ No user interface. Use anime.timeline().</code></pre>
       <li><strong>Generate logo variations</strong> — use an AI image tool with your existing logo as a style reference to explore merchandise, stickers, or alternate colorways</li>
     </ul>
     <p>In every case, the same rule applies: <strong>you bring the idea, AI brings the execution speed.</strong> The creativity is always yours to protect.</p>
+
+    <!-- NEXT CHAPTER CTA -->
+    <div class="next-chapter">
+      <div>
+        <div class="nc-label">Up Next — Chapter 01</div>
+        <div class="nc-title">Daily Focus Dashboard</div>
+        <div class="nc-desc">Build a real productivity tool. Learn localStorage, live timers, and DOM state — concepts you'll use in nearly every app you build.</div>
+      </div>
+      <a href="chapters/01/activity.html">Start Chapter 01 &rarr;</a>
+    </div>
   </section>
 
 </main>
